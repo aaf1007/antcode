@@ -1,14 +1,56 @@
-import type { ProblemSnippet } from "../types/problem.js";
+import { readFile } from "node:fs/promises";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import { Problem, ProblemSnippet } from "../types/problem.js";
 
-const BASE_URL = "https://leetcode-api-pied.vercel.app/problems"; // API URL
+/**
+ * Returns every problem in the database.
+ * Callers are responsible for slicing/paginating the result.
+ */
+export async function getAllProblemsList(): Promise<ProblemSnippet[]>  {
+    const data = await getDb(); // returns Problem[]
+    const snippet: ProblemSnippet[] = data.map(({ questionId, title, difficulty, topicTags, acRate }) => ({
+        questionId,
+        title,
+        difficulty,
+        topicTags,
+        acRate
+    }));
 
-/** Fetches the full list of LeetCode problems from the upstream API. */
-export async function getAllProblemsList(): Promise<ProblemSnippet[]> {
-    const res = await fetch(BASE_URL);
+    return snippet as ProblemSnippet[];
+}
 
-    if (!res.ok) {
-        throw new Error(`Could not fetch problems ${res.status}`);
-    }
+/**
+ * Looks up a single problem by its LeetCode `questionId`.
+ *
+ * @param problemid — the `questionId` to match (string, not the frontend id)
+ * @returns the matching problem, or `undefined` if there is no match
+ *          (the `as Problem` cast hides this — see TODO below)
+ */
+export async function getProblem(problemid: string) : Promise<Problem> {
+    const data = await getDb();
+    const found = data.find((problem: any) => problem.questionId === problemid);
 
-    return res.json() as Promise<ProblemSnippet[]>;
+    // TODO: cast lies when nothing matches — return `Problem | undefined` and
+    // let the route send a 404.
+    return found as Problem;
+}
+
+/**
+ * Loads the problem set from the local JSON file that stands in for a real db.
+ *
+ * Reads and parses on every call — fine for the mock, but replace this with the
+ * actual db query (and drop the file read) once the schema is finalized.
+ */
+async function getDb() : Promise<Problem[]> {
+    // ESM has no __dirname, so rebuild it from import.meta.url to keep the
+    // path relative to this file rather than the process cwd.
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = path.dirname(__filename);
+    const mockProblemsPath = path.resolve(__dirname, "../../db/problems.json");
+
+    const raw = await readFile(mockProblemsPath, "utf-8");
+    const data = JSON.parse(raw);
+
+    return data;
 }

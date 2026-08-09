@@ -6,11 +6,19 @@ const problemRouter = Router();
 
 /**
  * GET /api/problem
- * Returns a paginated slice of LeetCode problems from the upstream API.
+ * Returns a paginated slice of LeetCode problems.
  *
  * Query params:
  *   - limit (number, default 30) — page size
  *   - jump  (number, default 0)  — start index into the full list
+ *
+ * Sample request:
+ *   curl "http://localhost:5000/api/problem?limit=2&jump=0"
+ *
+ * On failure: 502 { "err": "Could not fetch problems" }
+ *
+ * TODO: `hasMore` is inverted — the request above sits at the start of a
+ * 150-problem list yet reports false. Should be `jump + limit < allData.length`.
  */
 problemRouter.get("/", async (req, res) => {
     try {
@@ -22,7 +30,7 @@ problemRouter.get("/", async (req, res) => {
 
         const body: ProblemPagination = {
             problems: currentPage,
-            hasMore: limit + jump - allData.length > 0
+            hasMore: limit + jump < allData.length
         };
 
         res.status(200).json(body);
