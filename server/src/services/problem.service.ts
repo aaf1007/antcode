@@ -27,13 +27,11 @@ export async function getAllProblemsList(): Promise<ProblemSnippet[]>  {
  * @returns the matching problem, or `undefined` if there is no match
  *          (the `as Problem` cast hides this — see TODO below)
  */
-export async function getProblem(problemid: string) : Promise<Problem> {
+export async function getProblem(problemid: string) : Promise<Problem | undefined> {
     const data = await getDb();
     const found = data.find((problem: any) => problem.questionId === problemid);
 
-    // TODO: cast lies when nothing matches — return `Problem | undefined` and
-    // let the route send a 404.
-    return found as Problem;
+    return found;
 }
 
 /**
@@ -41,6 +39,7 @@ export async function getProblem(problemid: string) : Promise<Problem> {
  *
  * Reads and parses on every call — fine for the mock, but replace this with the
  * actual db query (and drop the file read) once the schema is finalized.
+ * TODO: Change this to real db call using Sequelize
  */
 async function getDb() : Promise<Problem[]> {
     // ESM has no __dirname, so rebuild it from import.meta.url to keep the

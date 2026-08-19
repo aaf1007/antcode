@@ -2,10 +2,8 @@ import { Router } from "express";
 
 const userRouter = Router();
 
-
 const users = [
-    {id: 1, name: "Thant Hayman Thway", age: 21, school: "SFU", baby: "Anton"},
-    {id:2 , name: "Anton Florendo", age: 24, school: "SFU", baby: "Hayman"},
+    {id:2 , name: "Anton Florendo", age: 24, school: "SFU"},
 ];
 
 userRouter.get("/", (req, res) => {

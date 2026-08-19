@@ -16,9 +16,6 @@ const problemRouter = Router();
  *   curl "http://localhost:5000/api/problem?limit=2&jump=0"
  *
  * On failure: 502 { "err": "Could not fetch problems" }
- *
- * TODO: `hasMore` is inverted — the request above sits at the start of a
- * 150-problem list yet reports false. Should be `jump + limit < allData.length`.
  */
 problemRouter.get("/", async (req, res) => {
     try {
@@ -43,12 +40,13 @@ problemRouter.get("/:problemId", async (req, res) => {
     const problemId = req.params.problemId;
 
     try {
-        // TODO: db call
-        
-        // TODO:
-        const body = {};
+        const problem = await problemService.getProblem(problemId);
 
-        res.status(200).json(body);
+        if (!problem) {
+            return res.status(404).json({ err: `Problem ${problemId} not be found`});
+        }
+
+        res.status(200).json(problem);
     } catch (err) {
         res.status(502).json({ err: `Could not fetch problem ${problemId}` });
     }
