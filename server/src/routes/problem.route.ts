@@ -40,7 +40,7 @@ problemRouter.get("/:problemId", async (req, res) => {
     const problemId = req.params.problemId;
 
     try {
-        const problem = await problemService.getProblem(problemId);
+        const problem = await problemService.getProblemById(problemId);
 
         if (!problem) {
             return res.status(404).json({ err: `Problem ${problemId} not be found`});
