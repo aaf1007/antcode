@@ -50,11 +50,11 @@ export type Problem = {
 
 // Data shown when displaying list of problems in client
 export type ProblemSnippet = {
-    questionId: string,
-    title: string,
-    difficulty: Difficulty,
-    topicTags: TopicTag[],
-    acRate: number
+    questionId: string;
+    title: string;
+    difficulty: Difficulty;
+    topicTags: TopicTag[];
+    acRate: number;
 };
 
 export type ProblemPagination = {
