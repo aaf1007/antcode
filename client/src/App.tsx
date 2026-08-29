@@ -8,7 +8,7 @@ function App() {
   const [error, setError] = useState<Error | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const BASE_URL = "http://localhost:5000/api/";
+  const BASE_URL = "http://localhost:5001/api/";
 
   async function fetchAllProblems(): Promise<ProblemPagination> {
     const url = BASE_URL + "problem";
@@ -23,6 +23,23 @@ function App() {
 
     return data.json();
   };
+
+  const loadProblems = async () => {
+    setIsLoading(true);
+    try {
+      const data = await fetchAllProblems();
+      setHasMore(data.hasMore);
+      setProblems(data.problems);
+    } catch (error) {
+      if (error instanceof Error) {
+        setError(error);
+      } else {
+        setError(new Error("Unknown Error Occured"));
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
   useEffect(() => {
     const loadProblems = async () => {
@@ -49,6 +66,7 @@ function App() {
 
   return (
     <div>
+      <button onClick={() => loadProblems()}>Get More Probems</button>
       {problems?.map(cur => (
         <li key={cur.questionId}>
           {cur.title}
