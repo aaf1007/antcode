@@ -4,10 +4,7 @@ type RouteContext = {
   params: Promise<{ userId: string }>;
 };
 
-export async function GET(
-  _request: Request,
-  context: RouteContext,
-): Promise<Response> {
+export async function GET(_request: Request, context: RouteContext): Promise<Response> {
   const { userId } = await context.params;
   const id = Number(userId);
   const user = users.find((currentUser) => currentUser.id === id);

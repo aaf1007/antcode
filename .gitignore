@@ -49,3 +49,8 @@ coverage/
 # OS
 .DS_Store
 Thumbs.db
+
+# Agents
+claude/
+CLAUDE.md 
+.*

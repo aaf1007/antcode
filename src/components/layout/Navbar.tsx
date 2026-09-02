@@ -2,17 +2,17 @@ import Link from "next/link";
 
 export function Navbar() {
   return (
-    <header className="border-b border-[color:var(--border)] bg-white/90 backdrop-blur">
-      <div className="mx-auto flex min-h-16 max-w-6xl items-center justify-between px-5 sm:px-8">
+    <header className="backdrop-blur border-[color:var(--border)] border-b">
+      <div className="flex justify-between items-center mx-auto px-5 sm:px-8 max-w-5xl min-h-16">
         <Link
-          className="text-lg font-semibold tracking-tight text-[color:var(--text-h)] outline-none transition-colors hover:text-[color:var(--accent)] focus-visible:rounded-sm focus-visible:ring-2 focus-visible:ring-[color:var(--accent)] focus-visible:ring-offset-4"
+          className="focus-visible:rounded-sm outline-none focus-visible:ring-[color:var(--accent)] focus-visible:ring-2 focus-visible:ring-offset-4 font-semibold text-[color:var(--text-h)] hover:text-[color:var(--accent)] text-lg tracking-tight transition-colors"
           href="/"
         >
           Ant<span className="text-[color:var(--accent)]">Code</span>
         </Link>
         <nav aria-label="Primary navigation">
           <Link
-            className="rounded-md px-3 py-2 text-sm font-medium text-[color:var(--text)] outline-none transition-colors hover:bg-[color:var(--accent-bg)] hover:text-[color:var(--accent)] focus-visible:ring-2 focus-visible:ring-[color:var(--accent)] focus-visible:ring-offset-2"
+            className="px-3 py-2 rounded-md outline-none focus-visible:ring-[color:var(--accent)] focus-visible:ring-2 focus-visible:ring-offset-2 font-medium text-[color:var(--text)] hover:text-[color:var(--accent)] text-sm transition-colors hover:bg-[color:var(--accent-bg)]"
             href="/"
           >
             Home

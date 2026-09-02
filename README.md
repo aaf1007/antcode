@@ -24,7 +24,7 @@ npm test
 npm run build
 npm run seed
 ```
-
+http://localhost:3000/
 PostgreSQL configuration is read from the root `.env.local` file. Use the
 existing `DB_*` variable names when configuring the database connection.
 
