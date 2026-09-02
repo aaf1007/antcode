@@ -33,9 +33,9 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'1dd2eeaf951022c6b0f279901ec55902937d6e8f4e5ecf1a72d930facc6514ce'>;
+  StorageHashBase<'a6d28af586670ef2da9b0aa628acd18d53028059d0040ee74982d9cf3cac8f34'>;
 export type ExecutionHash =
-  ExecutionHashBase<'1da9703081bc7fe3d814b0eafaa8161e507ff8fa8d1eeeca0f0152a447e85d1e'>;
+  ExecutionHashBase<'de967166cd12e823df10e1f6bd6ee8c51b86815fe9739cfa2efd307c53782777'>;
 export type ProfileHash =
   ProfileHashBase<'3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2'>;
 
@@ -240,16 +240,284 @@ type DefaultLiteralValue<CodecId extends string, Encoded> = CodecId extends keyo
   : Encoded;
 
 export type FieldOutputTypes = {
-  readonly public: { readonly Problem: { readonly problemId: CodecTypes['pg/text@1']['output'] } };
+  readonly public: {
+    readonly CodeSnippet: {
+      readonly problemId: CodecTypes['pg/text@1']['output'];
+      readonly languageId: CodecTypes['pg/text@1']['output'];
+      readonly code: CodecTypes['pg/text@1']['output'];
+    };
+    readonly HiddenTestCase: {
+      readonly problemId: CodecTypes['pg/text@1']['output'];
+      readonly idx: CodecTypes['pg/int4@1']['output'];
+      readonly input: CodecTypes['pg/text@1']['output'];
+      readonly expected: CodecTypes['pg/text@1']['output'];
+    };
+    readonly Language: {
+      readonly languageId: CodecTypes['pg/text@1']['output'];
+      readonly slug: CodecTypes['pg/text@1']['output'];
+      readonly name: CodecTypes['pg/text@1']['output'];
+    };
+    readonly Problem: {
+      readonly problemId: CodecTypes['pg/text@1']['output'];
+      readonly questionId: CodecTypes['pg/int4@1']['output'];
+      readonly frontendId: CodecTypes['pg/int4@1']['output'];
+      readonly slug: CodecTypes['pg/text@1']['output'];
+      readonly title: CodecTypes['pg/text@1']['output'];
+      readonly url: CodecTypes['pg/text@1']['output'];
+      readonly difficulty: 'Easy' | 'Medium' | 'Hard';
+      readonly category:
+        'Algorithms' | 'Database' | 'Shell' | 'Concurrency' | 'JavaScript' | 'pandas';
+      readonly isPremium: CodecTypes['pg/bool@1']['output'];
+      readonly contentHtml: CodecTypes['pg/text@1']['output'] | null;
+      readonly contentText: CodecTypes['pg/text@1']['output'] | null;
+      readonly metaKind: 'function' | 'design' | 'database';
+      readonly metaData: CodecTypes['pg/jsonb@1']['output'];
+      readonly exampleInputAll: CodecTypes['pg/text@1']['output'];
+      readonly exampleInputFirst: CodecTypes['pg/text@1']['output'];
+      readonly likes: CodecTypes['pg/int4@1']['output'];
+      readonly dislikes: CodecTypes['pg/int4@1']['output'];
+      readonly acRate: CodecTypes['pg/float8@1']['output'];
+      readonly totalAccepted: CodecTypes['pg/int4@1']['output'];
+      readonly totalSubmitted: CodecTypes['pg/int4@1']['output'];
+      readonly statsFetchedAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
+      readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
+    };
+    readonly ProblemHint: {
+      readonly problemId: CodecTypes['pg/text@1']['output'];
+      readonly idx: CodecTypes['pg/int4@1']['output'];
+      readonly text: CodecTypes['pg/text@1']['output'];
+    };
+    readonly ProblemTopic: {
+      readonly problemId: CodecTypes['pg/text@1']['output'];
+      readonly topicId: CodecTypes['pg/text@1']['output'];
+    };
+    readonly SimilarProblem: {
+      readonly problemId: CodecTypes['pg/text@1']['output'];
+      readonly similarProblemId: CodecTypes['pg/text@1']['output'];
+    };
+    readonly TestCase: {
+      readonly problemId: CodecTypes['pg/text@1']['output'];
+      readonly idx: CodecTypes['pg/int4@1']['output'];
+      readonly input: CodecTypes['pg/text@1']['output'];
+      readonly expected: CodecTypes['pg/text@1']['output'];
+    };
+    readonly Topic: {
+      readonly topicId: CodecTypes['pg/text@1']['output'];
+      readonly slug: CodecTypes['pg/text@1']['output'];
+      readonly name: CodecTypes['pg/text@1']['output'];
+    };
+  };
 };
 export type FieldInputTypes = {
-  readonly public: { readonly Problem: { readonly problemId: CodecTypes['pg/text@1']['input'] } };
+  readonly public: {
+    readonly CodeSnippet: {
+      readonly problemId: CodecTypes['pg/text@1']['input'];
+      readonly languageId: CodecTypes['pg/text@1']['input'];
+      readonly code: CodecTypes['pg/text@1']['input'];
+    };
+    readonly HiddenTestCase: {
+      readonly problemId: CodecTypes['pg/text@1']['input'];
+      readonly idx: CodecTypes['pg/int4@1']['input'];
+      readonly input: CodecTypes['pg/text@1']['input'];
+      readonly expected: CodecTypes['pg/text@1']['input'];
+    };
+    readonly Language: {
+      readonly languageId: CodecTypes['pg/text@1']['input'];
+      readonly slug: CodecTypes['pg/text@1']['input'];
+      readonly name: CodecTypes['pg/text@1']['input'];
+    };
+    readonly Problem: {
+      readonly problemId: CodecTypes['pg/text@1']['input'];
+      readonly questionId: CodecTypes['pg/int4@1']['input'];
+      readonly frontendId: CodecTypes['pg/int4@1']['input'];
+      readonly slug: CodecTypes['pg/text@1']['input'];
+      readonly title: CodecTypes['pg/text@1']['input'];
+      readonly url: CodecTypes['pg/text@1']['input'];
+      readonly difficulty: 'Easy' | 'Medium' | 'Hard';
+      readonly category:
+        'Algorithms' | 'Database' | 'Shell' | 'Concurrency' | 'JavaScript' | 'pandas';
+      readonly isPremium: CodecTypes['pg/bool@1']['input'];
+      readonly contentHtml: CodecTypes['pg/text@1']['input'] | null;
+      readonly contentText: CodecTypes['pg/text@1']['input'] | null;
+      readonly metaKind: 'function' | 'design' | 'database';
+      readonly metaData: CodecTypes['pg/jsonb@1']['input'];
+      readonly exampleInputAll: CodecTypes['pg/text@1']['input'];
+      readonly exampleInputFirst: CodecTypes['pg/text@1']['input'];
+      readonly likes: CodecTypes['pg/int4@1']['input'];
+      readonly dislikes: CodecTypes['pg/int4@1']['input'];
+      readonly acRate: CodecTypes['pg/float8@1']['input'];
+      readonly totalAccepted: CodecTypes['pg/int4@1']['input'];
+      readonly totalSubmitted: CodecTypes['pg/int4@1']['input'];
+      readonly statsFetchedAt: CodecTypes['pg/timestamptz-temporal@1']['input'];
+      readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['input'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-temporal@1']['input'];
+    };
+    readonly ProblemHint: {
+      readonly problemId: CodecTypes['pg/text@1']['input'];
+      readonly idx: CodecTypes['pg/int4@1']['input'];
+      readonly text: CodecTypes['pg/text@1']['input'];
+    };
+    readonly ProblemTopic: {
+      readonly problemId: CodecTypes['pg/text@1']['input'];
+      readonly topicId: CodecTypes['pg/text@1']['input'];
+    };
+    readonly SimilarProblem: {
+      readonly problemId: CodecTypes['pg/text@1']['input'];
+      readonly similarProblemId: CodecTypes['pg/text@1']['input'];
+    };
+    readonly TestCase: {
+      readonly problemId: CodecTypes['pg/text@1']['input'];
+      readonly idx: CodecTypes['pg/int4@1']['input'];
+      readonly input: CodecTypes['pg/text@1']['input'];
+      readonly expected: CodecTypes['pg/text@1']['input'];
+    };
+    readonly Topic: {
+      readonly topicId: CodecTypes['pg/text@1']['input'];
+      readonly slug: CodecTypes['pg/text@1']['input'];
+      readonly name: CodecTypes['pg/text@1']['input'];
+    };
+  };
 };
 export type StorageColumnTypes = {
-  readonly public: { readonly problem: { readonly problemId: CodecTypes['pg/text@1']['output'] } };
+  readonly public: {
+    readonly codeSnippet: {
+      readonly code: CodecTypes['pg/text@1']['output'];
+      readonly languageId: CodecTypes['pg/text@1']['output'];
+      readonly problemId: CodecTypes['pg/text@1']['output'];
+    };
+    readonly hiddenTestCase: {
+      readonly expected: CodecTypes['pg/text@1']['output'];
+      readonly idx: CodecTypes['pg/int4@1']['output'];
+      readonly input: CodecTypes['pg/text@1']['output'];
+      readonly problemId: CodecTypes['pg/text@1']['output'];
+    };
+    readonly language: {
+      readonly languageId: CodecTypes['pg/text@1']['output'];
+      readonly name: CodecTypes['pg/text@1']['output'];
+      readonly slug: CodecTypes['pg/text@1']['output'];
+    };
+    readonly problem: {
+      readonly acRate: CodecTypes['pg/float8@1']['output'];
+      readonly category:
+        'Algorithms' | 'Database' | 'Shell' | 'Concurrency' | 'JavaScript' | 'pandas';
+      readonly contentHtml: CodecTypes['pg/text@1']['output'] | null;
+      readonly contentText: CodecTypes['pg/text@1']['output'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
+      readonly difficulty: 'Easy' | 'Medium' | 'Hard';
+      readonly dislikes: CodecTypes['pg/int4@1']['output'];
+      readonly exampleInputAll: CodecTypes['pg/text@1']['output'];
+      readonly exampleInputFirst: CodecTypes['pg/text@1']['output'];
+      readonly frontendId: CodecTypes['pg/int4@1']['output'];
+      readonly isPremium: CodecTypes['pg/bool@1']['output'];
+      readonly likes: CodecTypes['pg/int4@1']['output'];
+      readonly metaData: CodecTypes['pg/jsonb@1']['output'];
+      readonly metaKind: 'function' | 'design' | 'database';
+      readonly problemId: CodecTypes['pg/text@1']['output'];
+      readonly questionId: CodecTypes['pg/int4@1']['output'];
+      readonly slug: CodecTypes['pg/text@1']['output'];
+      readonly statsFetchedAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
+      readonly title: CodecTypes['pg/text@1']['output'];
+      readonly totalAccepted: CodecTypes['pg/int4@1']['output'];
+      readonly totalSubmitted: CodecTypes['pg/int4@1']['output'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
+      readonly url: CodecTypes['pg/text@1']['output'];
+    };
+    readonly problemHint: {
+      readonly idx: CodecTypes['pg/int4@1']['output'];
+      readonly problemId: CodecTypes['pg/text@1']['output'];
+      readonly text: CodecTypes['pg/text@1']['output'];
+    };
+    readonly problemTopic: {
+      readonly problemId: CodecTypes['pg/text@1']['output'];
+      readonly topicId: CodecTypes['pg/text@1']['output'];
+    };
+    readonly similarProblem: {
+      readonly problemId: CodecTypes['pg/text@1']['output'];
+      readonly similarProblemId: CodecTypes['pg/text@1']['output'];
+    };
+    readonly testCase: {
+      readonly expected: CodecTypes['pg/text@1']['output'];
+      readonly idx: CodecTypes['pg/int4@1']['output'];
+      readonly input: CodecTypes['pg/text@1']['output'];
+      readonly problemId: CodecTypes['pg/text@1']['output'];
+    };
+    readonly topic: {
+      readonly name: CodecTypes['pg/text@1']['output'];
+      readonly slug: CodecTypes['pg/text@1']['output'];
+      readonly topicId: CodecTypes['pg/text@1']['output'];
+    };
+  };
 };
 export type StorageColumnInputTypes = {
-  readonly public: { readonly problem: { readonly problemId: CodecTypes['pg/text@1']['input'] } };
+  readonly public: {
+    readonly codeSnippet: {
+      readonly code: CodecTypes['pg/text@1']['input'];
+      readonly languageId: CodecTypes['pg/text@1']['input'];
+      readonly problemId: CodecTypes['pg/text@1']['input'];
+    };
+    readonly hiddenTestCase: {
+      readonly expected: CodecTypes['pg/text@1']['input'];
+      readonly idx: CodecTypes['pg/int4@1']['input'];
+      readonly input: CodecTypes['pg/text@1']['input'];
+      readonly problemId: CodecTypes['pg/text@1']['input'];
+    };
+    readonly language: {
+      readonly languageId: CodecTypes['pg/text@1']['input'];
+      readonly name: CodecTypes['pg/text@1']['input'];
+      readonly slug: CodecTypes['pg/text@1']['input'];
+    };
+    readonly problem: {
+      readonly acRate: CodecTypes['pg/float8@1']['input'];
+      readonly category:
+        'Algorithms' | 'Database' | 'Shell' | 'Concurrency' | 'JavaScript' | 'pandas';
+      readonly contentHtml: CodecTypes['pg/text@1']['input'] | null;
+      readonly contentText: CodecTypes['pg/text@1']['input'] | null;
+      readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['input'];
+      readonly difficulty: 'Easy' | 'Medium' | 'Hard';
+      readonly dislikes: CodecTypes['pg/int4@1']['input'];
+      readonly exampleInputAll: CodecTypes['pg/text@1']['input'];
+      readonly exampleInputFirst: CodecTypes['pg/text@1']['input'];
+      readonly frontendId: CodecTypes['pg/int4@1']['input'];
+      readonly isPremium: CodecTypes['pg/bool@1']['input'];
+      readonly likes: CodecTypes['pg/int4@1']['input'];
+      readonly metaData: CodecTypes['pg/jsonb@1']['input'];
+      readonly metaKind: 'function' | 'design' | 'database';
+      readonly problemId: CodecTypes['pg/text@1']['input'];
+      readonly questionId: CodecTypes['pg/int4@1']['input'];
+      readonly slug: CodecTypes['pg/text@1']['input'];
+      readonly statsFetchedAt: CodecTypes['pg/timestamptz-temporal@1']['input'];
+      readonly title: CodecTypes['pg/text@1']['input'];
+      readonly totalAccepted: CodecTypes['pg/int4@1']['input'];
+      readonly totalSubmitted: CodecTypes['pg/int4@1']['input'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-temporal@1']['input'];
+      readonly url: CodecTypes['pg/text@1']['input'];
+    };
+    readonly problemHint: {
+      readonly idx: CodecTypes['pg/int4@1']['input'];
+      readonly problemId: CodecTypes['pg/text@1']['input'];
+      readonly text: CodecTypes['pg/text@1']['input'];
+    };
+    readonly problemTopic: {
+      readonly problemId: CodecTypes['pg/text@1']['input'];
+      readonly topicId: CodecTypes['pg/text@1']['input'];
+    };
+    readonly similarProblem: {
+      readonly problemId: CodecTypes['pg/text@1']['input'];
+      readonly similarProblemId: CodecTypes['pg/text@1']['input'];
+    };
+    readonly testCase: {
+      readonly expected: CodecTypes['pg/text@1']['input'];
+      readonly idx: CodecTypes['pg/int4@1']['input'];
+      readonly input: CodecTypes['pg/text@1']['input'];
+      readonly problemId: CodecTypes['pg/text@1']['input'];
+    };
+    readonly topic: {
+      readonly name: CodecTypes['pg/text@1']['input'];
+      readonly slug: CodecTypes['pg/text@1']['input'];
+      readonly topicId: CodecTypes['pg/text@1']['input'];
+    };
+  };
 };
 export type TypeMaps = TypeMapsType<
   CodecTypes,
@@ -269,6 +537,138 @@ type ContractBase = Omit<
         readonly kind: 'postgres-schema';
         readonly entries: {
           readonly table: {
+            readonly codeSnippet: {
+              columns: {
+                readonly problemId: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly languageId: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly code: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['problemId', 'languageId'] };
+              uniques: readonly [];
+              indexes: readonly [
+                {
+                  readonly name: 'codeSnippet_problemId_idx_0024556d';
+                  readonly prefix: 'codeSnippet_problemId_idx';
+                  readonly columns: readonly ['problemId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'codeSnippet_languageId_idx_7aa66047';
+                  readonly prefix: 'codeSnippet_languageId_idx';
+                  readonly columns: readonly ['languageId'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'codeSnippet';
+                    readonly columns: readonly ['problemId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'problem';
+                    readonly columns: readonly ['problemId'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'codeSnippet';
+                    readonly columns: readonly ['languageId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'language';
+                    readonly columns: readonly ['languageId'];
+                  };
+                },
+              ];
+            };
+            readonly hiddenTestCase: {
+              columns: {
+                readonly problemId: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly idx: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly input: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly expected: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['problemId', 'idx'] };
+              uniques: readonly [];
+              indexes: readonly [
+                {
+                  readonly name: 'hiddenTestCase_problemId_idx_0024556d';
+                  readonly prefix: 'hiddenTestCase_problemId_idx';
+                  readonly columns: readonly ['problemId'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'hiddenTestCase';
+                    readonly columns: readonly ['problemId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'problem';
+                    readonly columns: readonly ['problemId'];
+                  };
+                },
+              ];
+            };
+            readonly language: {
+              columns: {
+                readonly languageId: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly slug: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly name: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['languageId'] };
+              uniques: readonly [{ readonly columns: readonly ['slug'] }];
+              indexes: readonly [];
+              foreignKeys: readonly [];
+            };
             readonly problem: {
               columns: {
                 readonly problemId: {
@@ -276,11 +676,397 @@ type ContractBase = Omit<
                   readonly codecId: 'pg/text@1';
                   readonly nullable: false;
                 };
+                readonly questionId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly frontendId: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly slug: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly title: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly url: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly difficulty: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly category: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly isPremium: {
+                  readonly nativeType: 'bool';
+                  readonly codecId: 'pg/bool@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/bool@1', false>;
+                  };
+                };
+                readonly contentHtml: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                };
+                readonly contentText: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                };
+                readonly metaKind: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly metaData: {
+                  readonly nativeType: 'jsonb';
+                  readonly codecId: 'pg/jsonb@1';
+                  readonly nullable: false;
+                };
+                readonly exampleInputAll: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly exampleInputFirst: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly likes: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly dislikes: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly acRate: {
+                  readonly nativeType: 'float8';
+                  readonly codecId: 'pg/float8@1';
+                  readonly nullable: false;
+                };
+                readonly totalAccepted: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly totalSubmitted: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly statsFetchedAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-temporal@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                };
+                readonly createdAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-temporal@1';
+                  readonly nullable: false;
+                  readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
+                };
+                readonly updatedAt: {
+                  readonly nativeType: 'timestamptz';
+                  readonly codecId: 'pg/timestamptz-temporal@1';
+                  readonly nullable: false;
+                };
               };
               primaryKey: { readonly columns: readonly ['problemId'] };
+              uniques: readonly [
+                { readonly columns: readonly ['questionId'] },
+                { readonly columns: readonly ['frontendId'] },
+                { readonly columns: readonly ['slug'] },
+              ];
+              indexes: readonly [
+                {
+                  readonly name: 'problem_isPremium_frontendId_idx_4f2f40c5';
+                  readonly prefix: 'problem_isPremium_frontendId_idx';
+                  readonly columns: readonly ['isPremium', 'frontendId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'problem_difficulty_idx_ab7b4a75';
+                  readonly prefix: 'problem_difficulty_idx';
+                  readonly columns: readonly ['difficulty'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'problem_category_idx_f2600f8e';
+                  readonly prefix: 'problem_category_idx';
+                  readonly columns: readonly ['category'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [];
+            };
+            readonly problemHint: {
+              columns: {
+                readonly problemId: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly idx: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly text: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['problemId', 'idx'] };
               uniques: readonly [];
+              indexes: readonly [
+                {
+                  readonly name: 'problemHint_problemId_idx_0024556d';
+                  readonly prefix: 'problemHint_problemId_idx';
+                  readonly columns: readonly ['problemId'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'problemHint';
+                    readonly columns: readonly ['problemId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'problem';
+                    readonly columns: readonly ['problemId'];
+                  };
+                },
+              ];
+            };
+            readonly problemTopic: {
+              columns: {
+                readonly problemId: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly topicId: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['problemId', 'topicId'] };
+              uniques: readonly [];
+              indexes: readonly [
+                {
+                  readonly name: 'problemTopic_topicId_idx_6f05808f';
+                  readonly prefix: 'problemTopic_topicId_idx';
+                  readonly columns: readonly ['topicId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'problemTopic_problemId_idx_0024556d';
+                  readonly prefix: 'problemTopic_problemId_idx';
+                  readonly columns: readonly ['problemId'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'problemTopic';
+                    readonly columns: readonly ['problemId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'problem';
+                    readonly columns: readonly ['problemId'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'problemTopic';
+                    readonly columns: readonly ['topicId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'topic';
+                    readonly columns: readonly ['topicId'];
+                  };
+                },
+              ];
+            };
+            readonly similarProblem: {
+              columns: {
+                readonly problemId: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly similarProblemId: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['problemId', 'similarProblemId'] };
+              uniques: readonly [];
+              indexes: readonly [
+                {
+                  readonly name: 'similarProblem_similarProblemId_idx_053a30d3';
+                  readonly prefix: 'similarProblem_similarProblemId_idx';
+                  readonly columns: readonly ['similarProblemId'];
+                  readonly unique: false;
+                },
+                {
+                  readonly name: 'similarProblem_problemId_idx_0024556d';
+                  readonly prefix: 'similarProblem_problemId_idx';
+                  readonly columns: readonly ['problemId'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'similarProblem';
+                    readonly columns: readonly ['problemId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'problem';
+                    readonly columns: readonly ['problemId'];
+                  };
+                },
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'similarProblem';
+                    readonly columns: readonly ['similarProblemId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'problem';
+                    readonly columns: readonly ['problemId'];
+                  };
+                },
+              ];
+            };
+            readonly testCase: {
+              columns: {
+                readonly problemId: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly idx: {
+                  readonly nativeType: 'int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: false;
+                };
+                readonly input: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly expected: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['problemId', 'idx'] };
+              uniques: readonly [];
+              indexes: readonly [
+                {
+                  readonly name: 'testCase_problemId_idx_0024556d';
+                  readonly prefix: 'testCase_problemId_idx';
+                  readonly columns: readonly ['problemId'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'testCase';
+                    readonly columns: readonly ['problemId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'problem';
+                    readonly columns: readonly ['problemId'];
+                  };
+                },
+              ];
+            };
+            readonly topic: {
+              columns: {
+                readonly topicId: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly slug: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+                readonly name: {
+                  readonly nativeType: 'text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['topicId'] };
+              uniques: readonly [{ readonly columns: readonly ['slug'] }];
               indexes: readonly [];
               foreignKeys: readonly [];
+            };
+          };
+          readonly valueSet: {
+            readonly problem_category: {
+              readonly kind: 'valueSet';
+              readonly values: readonly [
+                'Algorithms',
+                'Database',
+                'Shell',
+                'Concurrency',
+                'JavaScript',
+                'pandas',
+              ];
+            };
+            readonly problem_difficulty: {
+              readonly kind: 'valueSet';
+              readonly values: readonly ['Easy', 'Medium', 'Hard'];
+            };
+            readonly problem_meta_kind: {
+              readonly kind: 'valueSet';
+              readonly values: readonly ['function', 'design', 'database'];
             };
           };
         };
@@ -294,24 +1080,510 @@ type ContractBase = Omit<
   readonly targetFamily: 'sql';
   readonly roots: {
     readonly problem: { readonly namespace: 'public' & NamespaceId; readonly model: 'Problem' };
+    readonly topic: { readonly namespace: 'public' & NamespaceId; readonly model: 'Topic' };
+    readonly problemTopic: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'ProblemTopic';
+    };
+    readonly language: { readonly namespace: 'public' & NamespaceId; readonly model: 'Language' };
+    readonly codeSnippet: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'CodeSnippet';
+    };
+    readonly problemHint: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'ProblemHint';
+    };
+    readonly testCase: { readonly namespace: 'public' & NamespaceId; readonly model: 'TestCase' };
+    readonly hiddenTestCase: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'HiddenTestCase';
+    };
+    readonly similarProblem: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'SimilarProblem';
+    };
   };
   readonly domain: {
     readonly namespaces: {
       readonly public: {
         readonly models: {
-          readonly Problem: {
+          readonly CodeSnippet: {
             readonly fields: {
               readonly problemId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly languageId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly code: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+            };
+            readonly relations: {
+              readonly language: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Language';
+                };
+                readonly cardinality: 'N:1';
+                readonly on: {
+                  readonly localFields: readonly ['languageId'];
+                  readonly targetFields: readonly ['languageId'];
+                };
+              };
+              readonly problem: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Problem';
+                };
+                readonly cardinality: 'N:1';
+                readonly on: {
+                  readonly localFields: readonly ['problemId'];
+                  readonly targetFields: readonly ['problemId'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'codeSnippet';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly problemId: { readonly column: 'problemId' };
+                readonly languageId: { readonly column: 'languageId' };
+                readonly code: { readonly column: 'code' };
+              };
+            };
+          };
+          readonly HiddenTestCase: {
+            readonly fields: {
+              readonly problemId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly idx: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly input: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly expected: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+            };
+            readonly relations: {
+              readonly problem: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Problem';
+                };
+                readonly cardinality: 'N:1';
+                readonly on: {
+                  readonly localFields: readonly ['problemId'];
+                  readonly targetFields: readonly ['problemId'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'hiddenTestCase';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly problemId: { readonly column: 'problemId' };
+                readonly idx: { readonly column: 'idx' };
+                readonly input: { readonly column: 'input' };
+                readonly expected: { readonly column: 'expected' };
+              };
+            };
+          };
+          readonly Language: {
+            readonly fields: {
+              readonly languageId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly slug: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly name: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
             };
             readonly relations: Record<string, never>;
             readonly storage: {
+              readonly table: 'language';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly languageId: { readonly column: 'languageId' };
+                readonly slug: { readonly column: 'slug' };
+                readonly name: { readonly column: 'name' };
+              };
+            };
+          };
+          readonly Problem: {
+            readonly fields: {
+              readonly problemId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly questionId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly frontendId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly slug: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly title: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly url: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly difficulty: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly category: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly isPremium: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/bool@1' };
+              };
+              readonly contentHtml: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly contentText: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly metaKind: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly metaData: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/jsonb@1' };
+              };
+              readonly exampleInputAll: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly exampleInputFirst: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly likes: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly dislikes: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly acRate: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
+              };
+              readonly totalAccepted: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly totalSubmitted: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly statsFetchedAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-temporal@1';
+                };
+              };
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-temporal@1';
+                };
+              };
+              readonly updatedAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-temporal@1';
+                };
+              };
+            };
+            readonly relations: Record<string, never>;
+            readonly storage: {
               readonly table: 'problem';
               readonly namespaceId: 'public';
-              readonly fields: { readonly problemId: { readonly column: 'problemId' } };
+              readonly fields: {
+                readonly problemId: { readonly column: 'problemId' };
+                readonly questionId: { readonly column: 'questionId' };
+                readonly frontendId: { readonly column: 'frontendId' };
+                readonly slug: { readonly column: 'slug' };
+                readonly title: { readonly column: 'title' };
+                readonly url: { readonly column: 'url' };
+                readonly difficulty: { readonly column: 'difficulty' };
+                readonly category: { readonly column: 'category' };
+                readonly isPremium: { readonly column: 'isPremium' };
+                readonly contentHtml: { readonly column: 'contentHtml' };
+                readonly contentText: { readonly column: 'contentText' };
+                readonly metaKind: { readonly column: 'metaKind' };
+                readonly metaData: { readonly column: 'metaData' };
+                readonly exampleInputAll: { readonly column: 'exampleInputAll' };
+                readonly exampleInputFirst: { readonly column: 'exampleInputFirst' };
+                readonly likes: { readonly column: 'likes' };
+                readonly dislikes: { readonly column: 'dislikes' };
+                readonly acRate: { readonly column: 'acRate' };
+                readonly totalAccepted: { readonly column: 'totalAccepted' };
+                readonly totalSubmitted: { readonly column: 'totalSubmitted' };
+                readonly statsFetchedAt: { readonly column: 'statsFetchedAt' };
+                readonly createdAt: { readonly column: 'createdAt' };
+                readonly updatedAt: { readonly column: 'updatedAt' };
+              };
             };
+          };
+          readonly ProblemHint: {
+            readonly fields: {
+              readonly problemId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly idx: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly text: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+            };
+            readonly relations: {
+              readonly problem: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Problem';
+                };
+                readonly cardinality: 'N:1';
+                readonly on: {
+                  readonly localFields: readonly ['problemId'];
+                  readonly targetFields: readonly ['problemId'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'problemHint';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly problemId: { readonly column: 'problemId' };
+                readonly idx: { readonly column: 'idx' };
+                readonly text: { readonly column: 'text' };
+              };
+            };
+          };
+          readonly ProblemTopic: {
+            readonly fields: {
+              readonly problemId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly topicId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+            };
+            readonly relations: {
+              readonly problem: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Problem';
+                };
+                readonly cardinality: 'N:1';
+                readonly on: {
+                  readonly localFields: readonly ['problemId'];
+                  readonly targetFields: readonly ['problemId'];
+                };
+              };
+              readonly topic: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Topic';
+                };
+                readonly cardinality: 'N:1';
+                readonly on: {
+                  readonly localFields: readonly ['topicId'];
+                  readonly targetFields: readonly ['topicId'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'problemTopic';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly problemId: { readonly column: 'problemId' };
+                readonly topicId: { readonly column: 'topicId' };
+              };
+            };
+          };
+          readonly SimilarProblem: {
+            readonly fields: {
+              readonly problemId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly similarProblemId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+            };
+            readonly relations: {
+              readonly problem: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Problem';
+                };
+                readonly cardinality: 'N:1';
+                readonly on: {
+                  readonly localFields: readonly ['problemId'];
+                  readonly targetFields: readonly ['problemId'];
+                };
+              };
+              readonly similar: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Problem';
+                };
+                readonly cardinality: 'N:1';
+                readonly on: {
+                  readonly localFields: readonly ['similarProblemId'];
+                  readonly targetFields: readonly ['problemId'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'similarProblem';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly problemId: { readonly column: 'problemId' };
+                readonly similarProblemId: { readonly column: 'similarProblemId' };
+              };
+            };
+          };
+          readonly TestCase: {
+            readonly fields: {
+              readonly problemId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly idx: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly input: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly expected: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+            };
+            readonly relations: {
+              readonly problem: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'Problem';
+                };
+                readonly cardinality: 'N:1';
+                readonly on: {
+                  readonly localFields: readonly ['problemId'];
+                  readonly targetFields: readonly ['problemId'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'testCase';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly problemId: { readonly column: 'problemId' };
+                readonly idx: { readonly column: 'idx' };
+                readonly input: { readonly column: 'input' };
+                readonly expected: { readonly column: 'expected' };
+              };
+            };
+          };
+          readonly Topic: {
+            readonly fields: {
+              readonly topicId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly slug: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly name: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+            };
+            readonly relations: Record<string, never>;
+            readonly storage: {
+              readonly table: 'topic';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly topicId: { readonly column: 'topicId' };
+                readonly slug: { readonly column: 'slug' };
+                readonly name: { readonly column: 'name' };
+              };
+            };
+          };
+        };
+        readonly enum: {
+          readonly problem_difficulty: {
+            readonly codecId: 'pg/text@1';
+            readonly members: readonly [
+              { readonly name: 'easy'; readonly value: 'Easy' },
+              { readonly name: 'medium'; readonly value: 'Medium' },
+              { readonly name: 'hard'; readonly value: 'Hard' },
+            ];
+          };
+          readonly problem_category: {
+            readonly codecId: 'pg/text@1';
+            readonly members: readonly [
+              { readonly name: 'algorithms'; readonly value: 'Algorithms' },
+              { readonly name: 'database'; readonly value: 'Database' },
+              { readonly name: 'shell'; readonly value: 'Shell' },
+              { readonly name: 'concurrency'; readonly value: 'Concurrency' },
+              { readonly name: 'javascript'; readonly value: 'JavaScript' },
+              { readonly name: 'pandas'; readonly value: 'pandas' },
+            ];
+          };
+          readonly problem_meta_kind: {
+            readonly codecId: 'pg/text@1';
+            readonly members: readonly [
+              { readonly name: 'fn'; readonly value: 'function' },
+              { readonly name: 'design'; readonly value: 'design' },
+              { readonly name: 'database'; readonly value: 'database' },
+            ];
           };
         };
       };
@@ -343,8 +1615,33 @@ type ContractBase = Omit<
         {
           readonly ref: {
             readonly namespace: 'public';
+            readonly table: 'language';
+            readonly column: 'languageId';
+          };
+          readonly onCreate: { readonly kind: 'generator'; readonly id: 'cuid2' };
+        },
+        {
+          readonly ref: {
+            readonly namespace: 'public';
             readonly table: 'problem';
             readonly column: 'problemId';
+          };
+          readonly onCreate: { readonly kind: 'generator'; readonly id: 'cuid2' };
+        },
+        {
+          readonly ref: {
+            readonly namespace: 'public';
+            readonly table: 'problem';
+            readonly column: 'updatedAt';
+          };
+          readonly onCreate: { readonly kind: 'generator'; readonly id: 'instantNow' };
+          readonly onUpdate: { readonly kind: 'generator'; readonly id: 'instantNow' };
+        },
+        {
+          readonly ref: {
+            readonly namespace: 'public';
+            readonly table: 'topic';
+            readonly column: 'topicId';
           };
           readonly onCreate: { readonly kind: 'generator'; readonly id: 'cuid2' };
         },

@@ -1,5 +1,174 @@
 // use prisma-next
 
+// LeetCode problem catalog, seeded from database/raw/leetcode_problems.json
+// (4,041 problems). Seed row counts per table are noted on each model.
+//
+// Relations are declared only on the owning (child) side — Prisma Next does not
+// materialize a back-reference field on the target model. Reads that start from
+// a Problem and want its topics / snippets / hints query the child table
+// filtered by problemId; there is no include hanging off Problem.
+
+enum problem_difficulty {
+  @@type("pg/text@1")
+  easy   = "Easy"
+  medium = "Medium"
+  hard   = "Hard"
+}
+
+enum problem_category {
+  @@type("pg/text@1")
+  algorithms  = "Algorithms"
+  database    = "Database"
+  shell       = "Shell"
+  concurrency = "Concurrency"
+  javascript  = "JavaScript"
+  pandas      = "pandas"
+}
+
+// Which shape metaData holds. Extracted at seed time so the three incompatible
+// shapes can be filtered on without reaching into the Jsonb.
+enum problem_meta_kind {
+  @@type("pg/text@1")
+  fn       = "function" // { name, params[], return }        ~3,900 rows
+  design   = "design"   // { classname, constructor, methods[] }  131 rows
+  database = "database" // { database_schema, mysql, postgresql, ... }
+}
+
+// 4,041 rows — every problem, premium included.
 model Problem {
   problemId String @id @default(cuid(2))
+
+  // Upstream identity. All three are unique and gap-free in the source, but the
+  // surrogate key above is what other tables reference: LeetCode renumbers and
+  // re-slugs occasionally, and user-owned rows should not ride on that.
+  questionId Int    @unique
+  frontendId Int    @unique
+  slug       String @unique
+  title      String
+  url        String
+
+  difficulty problem_difficulty
+  category   problem_category
+
+  // 781 premium problems ship as metadata-only stubs: title, difficulty, topics
+  // and stats, but no body, no code snippets and no test cases. They are kept in
+  // the catalog because frontendId is gap-free — dropping them puts visible
+  // holes in the problem list. Gate rendering on isPremium.
+  isPremium   Boolean @default(false)
+  contentHtml String?
+  contentText String? // plain-text copy of contentHtml, for search
+
+  // meta_data is genuinely polymorphic across three shapes, so it stays raw.
+  metaKind problem_meta_kind
+  metaData Jsonb
+
+  // Both are inputs only — no expected values.
+  // Every example case, newline-delimited: the exact payload the judge accepts
+  // when the user hits "Run". Source key: example_testcases
+  exampleInputAll String
+  // The first example case only, prefilling the editor's testcase box on load.
+  // Always a prefix of exampleInputAll. Source key: sample_testcase
+  exampleInputFirst String
+
+  // Upstream stats, valid as of statsFetchedAt. Int is sufficient: the largest
+  // value in the source is 40.1M submissions, well inside int4.
+  likes          Int
+  dislikes       Int
+  acRate         Float
+  totalAccepted  Int
+  totalSubmitted Int
+  statsFetchedAt DateTime @default(now())
+
+  createdAt temporal.createdAt()
+  updatedAt temporal.updatedAt()
+
+  @@index([isPremium, frontendId]) // default catalog listing
+  @@index([difficulty])
+  @@index([category])
+}
+
+// 175 rows.
+model Topic {
+  topicId String @id @default(cuid(2))
+  slug    String @unique // "hash-table"
+  name    String         // "Hash Table"
+}
+
+// 12,835 rows.
+model ProblemTopic {
+  problemId String
+  topicId   String
+  problem   Problem @relation(fields: [problemId], references: [problemId], onDelete: Cascade)
+  topic     Topic   @relation(fields: [topicId], references: [topicId], onDelete: Cascade)
+
+  @@id([problemId, topicId])
+  @@index([topicId]) // problems by topic
+}
+
+// 25 rows.
+model Language {
+  languageId String @id @default(cuid(2))
+  slug       String @unique // "python3"
+  name       String         // "Python3"
+}
+
+// 59,035 rows / 10.3 MB — the largest table by far, and the reason it is split
+// out rather than inlined on Problem: a problem page fetches the one language
+// the editor has open instead of dragging all 25 boilerplate stubs along.
+model CodeSnippet {
+  problemId  String
+  languageId String
+  code       String
+  problem    Problem  @relation(fields: [problemId], references: [problemId], onDelete: Cascade)
+  language   Language @relation(fields: [languageId], references: [languageId], onDelete: Restrict)
+
+  @@id([problemId, languageId])
+}
+
+// 7,056 rows. Ordered, and addressable one at a time for progressive reveal.
+model ProblemHint {
+  problemId String
+  idx       Int
+  text      String
+  problem   Problem @relation(fields: [problemId], references: [problemId], onDelete: Cascade)
+
+  @@id([problemId, idx])
+}
+
+// 7,601 rows. Visible example cases — safe to send to the client.
+model TestCase {
+  problemId String
+  idx       Int
+  input     String
+  expected  String
+  problem   Problem @relation(fields: [problemId], references: [problemId], onDelete: Cascade)
+
+  @@id([problemId, idx])
+}
+
+// 0 rows on seed — the source ships hidden_test_cases as [] for every problem.
+// Intentionally its own table rather than a flag on TestCase: hidden expectations
+// then cannot leak through an endpoint that forgot to filter, because the
+// client-facing table does not contain them.
+model HiddenTestCase {
+  problemId String
+  idx       Int
+  input     String
+  expected  String
+  problem   Problem @relation(fields: [problemId], references: [problemId], onDelete: Cascade)
+
+  @@id([problemId, idx])
+}
+
+// 5,186 rows. Every edge in the source is symmetric, so both directions are
+// stored: "problems similar to X" is then one indexed lookup on problemId
+// rather than an OR across both columns.
+model SimilarProblem {
+  problemId        String
+  similarProblemId String
+  problem          Problem @relation(fields: [problemId], references: [problemId], onDelete: Cascade)
+  similar          Problem @relation(fields: [similarProblemId], references: [problemId], onDelete: Cascade)
+
+  @@id([problemId, similarProblemId])
+  @@index([similarProblemId])
 }
