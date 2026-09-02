@@ -9,10 +9,14 @@
     "start": "next start",
     "lint": "eslint .",
     "test": "node --import tsx --conditions=react-server --test \"src/**/*.test.ts\"",
-    "seed": "node --import tsx --conditions=react-server src/features/problems/problem.seed.ts"
+    "seed": "node --import tsx --conditions=react-server src/features/problems/problem.seed.ts",
+    "contract:emit": "prisma contract emit",
+    "postinstall": "prisma skills sync || exit 0"
   },
   "dependencies": {
     "@next/env": "^16.3.3",
+    "@prisma/orm-postgres": "^8.0.0-rc.8",
+    "dotenv": "^17.4.2",
     "next": "^16.3.3",
     "pg": "^8.23.0",
     "pg-hstore": "^2.3.4",
@@ -22,14 +26,16 @@
     "server-only": "^0.0.1"
   },
   "devDependencies": {
+    "@prisma/cli-engine": "^0.2.3",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/node": "^26.4.0",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.5",
     "eslint": "^9.39.5",
     "eslint-config-next": "^16.3.3",
+    "prisma": "^8.0.0-rc.10",
     "tailwindcss": "^4.3.3",
-    "tsx": "^4.23.12",
+    "tsx": "^4.23.13",
     "typescript": "^6.0.3"
   }
 }

@@ -1,0 +1,6 @@
+database/prisma/contract.json linguist-generated
+database/prisma/contract.d.ts linguist-generated
+database/prisma/ops.json linguist-generated
+database/prisma/migration.json linguist-generated
+migrations/snapshots/**/contract.json linguist-generated
+migrations/snapshots/**/contract.d.ts linguist-generated

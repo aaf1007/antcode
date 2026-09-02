@@ -52,5 +52,12 @@ Thumbs.db
 
 # Agents
 claude/
-CLAUDE.md 
-.*
+.claude/
+CLAUDE.md
+AGENTS.md
+
+# Tooling scratch output
+.playwright-mcp/
+
+# Deploy
+.vercel/
