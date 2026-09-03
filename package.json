@@ -9,7 +9,7 @@
     "start": "next start",
     "lint": "eslint .",
     "test": "node --import tsx --conditions=react-server --test \"src/**/*.test.ts\"",
-    "seed": "node --import tsx --conditions=react-server src/features/problems/problem.seed.ts",
+    "seed": "node --import tsx database/seed/problems.ts",
     "contract:emit": "prisma contract emit",
     "postinstall": "prisma skills sync || exit 0"
   },

@@ -33,9 +33,9 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'b20160f7b63f0504cadc8adb3a0507362149cf4e2fc6d149a8d91b9cef508be3'>;
+  StorageHashBase<'8e9cb51c1f511a614d5e8e10eca632438c520512293b07895e891af6ff1a4fd8'>;
 export type ExecutionHash =
-  ExecutionHashBase<'bf76665d972690ecfdb49414f9927970592c68a6d7a6ec9673dac9aa21ece346'>;
+  ExecutionHashBase<'de967166cd12e823df10e1f6bd6ee8c51b86815fe9739cfa2efd307c53782777'>;
 export type ProfileHash =
   ProfileHashBase<'3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2'>;
 
@@ -279,9 +279,9 @@ export type FieldOutputTypes = {
       readonly acRate: CodecTypes['pg/float8@1']['output'];
       readonly totalAccepted: CodecTypes['pg/int4@1']['output'];
       readonly totalSubmitted: CodecTypes['pg/int4@1']['output'];
-      readonly statsFetchedAt: CodecTypes['pg/timestamptz-string@1']['output'];
-      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
-      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly statsFetchedAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
+      readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
     };
     readonly ProblemHint: {
       readonly problemId: CodecTypes['pg/text@1']['output'];
@@ -349,9 +349,9 @@ export type FieldInputTypes = {
       readonly acRate: CodecTypes['pg/float8@1']['input'];
       readonly totalAccepted: CodecTypes['pg/int4@1']['input'];
       readonly totalSubmitted: CodecTypes['pg/int4@1']['input'];
-      readonly statsFetchedAt: CodecTypes['pg/timestamptz-string@1']['input'];
-      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
-      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly statsFetchedAt: CodecTypes['pg/timestamptz-temporal@1']['input'];
+      readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['input'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-temporal@1']['input'];
     };
     readonly ProblemHint: {
       readonly problemId: CodecTypes['pg/text@1']['input'];
@@ -403,7 +403,7 @@ export type StorageColumnTypes = {
         'Algorithms' | 'Database' | 'Shell' | 'Concurrency' | 'JavaScript' | 'pandas';
       readonly contentHtml: CodecTypes['pg/text@1']['output'] | null;
       readonly contentText: CodecTypes['pg/text@1']['output'] | null;
-      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
       readonly difficulty: 'Easy' | 'Medium' | 'Hard';
       readonly dislikes: CodecTypes['pg/int4@1']['output'];
       readonly exampleInputAll: CodecTypes['pg/text@1']['output'];
@@ -416,11 +416,11 @@ export type StorageColumnTypes = {
       readonly problemId: CodecTypes['pg/text@1']['output'];
       readonly questionId: CodecTypes['pg/int4@1']['output'];
       readonly slug: CodecTypes['pg/text@1']['output'];
-      readonly statsFetchedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly statsFetchedAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
       readonly title: CodecTypes['pg/text@1']['output'];
       readonly totalAccepted: CodecTypes['pg/int4@1']['output'];
       readonly totalSubmitted: CodecTypes['pg/int4@1']['output'];
-      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['output'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-temporal@1']['output'];
       readonly url: CodecTypes['pg/text@1']['output'];
     };
     readonly problemHint: {
@@ -473,7 +473,7 @@ export type StorageColumnInputTypes = {
         'Algorithms' | 'Database' | 'Shell' | 'Concurrency' | 'JavaScript' | 'pandas';
       readonly contentHtml: CodecTypes['pg/text@1']['input'] | null;
       readonly contentText: CodecTypes['pg/text@1']['input'] | null;
-      readonly createdAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly createdAt: CodecTypes['pg/timestamptz-temporal@1']['input'];
       readonly difficulty: 'Easy' | 'Medium' | 'Hard';
       readonly dislikes: CodecTypes['pg/int4@1']['input'];
       readonly exampleInputAll: CodecTypes['pg/text@1']['input'];
@@ -486,11 +486,11 @@ export type StorageColumnInputTypes = {
       readonly problemId: CodecTypes['pg/text@1']['input'];
       readonly questionId: CodecTypes['pg/int4@1']['input'];
       readonly slug: CodecTypes['pg/text@1']['input'];
-      readonly statsFetchedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly statsFetchedAt: CodecTypes['pg/timestamptz-temporal@1']['input'];
       readonly title: CodecTypes['pg/text@1']['input'];
       readonly totalAccepted: CodecTypes['pg/int4@1']['input'];
       readonly totalSubmitted: CodecTypes['pg/int4@1']['input'];
-      readonly updatedAt: CodecTypes['pg/timestamptz-string@1']['input'];
+      readonly updatedAt: CodecTypes['pg/timestamptz-temporal@1']['input'];
       readonly url: CodecTypes['pg/text@1']['input'];
     };
     readonly problemHint: {
@@ -777,19 +777,19 @@ type ContractBase = Omit<
                 };
                 readonly statsFetchedAt: {
                   readonly nativeType: 'timestamptz';
-                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly codecId: 'pg/timestamptz-temporal@1';
                   readonly nullable: false;
                   readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
                 };
                 readonly createdAt: {
                   readonly nativeType: 'timestamptz';
-                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly codecId: 'pg/timestamptz-temporal@1';
                   readonly nullable: false;
                   readonly default: { readonly kind: 'function'; readonly expression: 'now()' };
                 };
                 readonly updatedAt: {
                   readonly nativeType: 'timestamptz';
-                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly codecId: 'pg/timestamptz-temporal@1';
                   readonly nullable: false;
                 };
               };
@@ -1312,21 +1312,21 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: {
                   readonly kind: 'scalar';
-                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly codecId: 'pg/timestamptz-temporal@1';
                 };
               };
               readonly createdAt: {
                 readonly nullable: false;
                 readonly type: {
                   readonly kind: 'scalar';
-                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly codecId: 'pg/timestamptz-temporal@1';
                 };
               };
               readonly updatedAt: {
                 readonly nullable: false;
                 readonly type: {
                   readonly kind: 'scalar';
-                  readonly codecId: 'pg/timestamptz-string@1';
+                  readonly codecId: 'pg/timestamptz-temporal@1';
                 };
               };
             };
@@ -1635,8 +1635,8 @@ type ContractBase = Omit<
             readonly table: 'problem';
             readonly column: 'updatedAt';
           };
-          readonly onCreate: { readonly kind: 'generator'; readonly id: 'timestampNow' };
-          readonly onUpdate: { readonly kind: 'generator'; readonly id: 'timestampNow' };
+          readonly onCreate: { readonly kind: 'generator'; readonly id: 'instantNow' };
+          readonly onUpdate: { readonly kind: 'generator'; readonly id: 'instantNow' };
         },
         {
           readonly ref: {

@@ -29,9 +29,10 @@ enum problem_category {
 // shapes can be filtered on without reaching into the Jsonb.
 enum problem_meta_kind {
   @@type("pg/text@1")
-  fn       = "function" // { name, params[], return }        ~3,900 rows
-  design   = "design"   // { classname, constructor, methods[] }  131 rows
-  database = "database" // { database_schema, mysql, postgresql, ... }
+  fn       = "function" // { name, params[], return }              3,569 rows
+  design   = "design"   // { classname, constructor, methods[] }     131 rows
+  database = "database" // { database_schema, mysql, postgresql }    337 rows
+  shell    = "shell"    // { shell, manual } — the 4 Bash problems
 }
 
 // 4,041 rows — every problem, premium included.
@@ -77,10 +78,12 @@ model Problem {
   acRate         Float
   totalAccepted  Int
   totalSubmitted Int
-  statsFetchedAt DateTime @default(now())
+  statsFetchedAt TimestamptzString @default(now())
 
-  createdAt temporal.createdAt()
-  updatedAt temporal.updatedAt()
+  // *String variants: the Temporal-backed codecs need a global Temporal API,
+  // which Node does not provide. These read and write Postgres's own text.
+  createdAt temporal.createdAtString()
+  updatedAt temporal.updatedAtString()
 
   @@index([isPremium, frontendId]) // default catalog listing
   @@index([difficulty])

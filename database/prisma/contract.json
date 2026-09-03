@@ -105,6 +105,10 @@
               {
                 "name": "database",
                 "value": "database"
+              },
+              {
+                "name": "shell",
+                "value": "shell"
               }
             ]
           }
@@ -329,7 +333,7 @@
               "createdAt": {
                 "nullable": false,
                 "type": {
-                  "codecId": "pg/timestamptz-temporal@1",
+                  "codecId": "pg/timestamptz-string@1",
                   "kind": "scalar"
                 }
               },
@@ -432,7 +436,7 @@
               "statsFetchedAt": {
                 "nullable": false,
                 "type": {
-                  "codecId": "pg/timestamptz-temporal@1",
+                  "codecId": "pg/timestamptz-string@1",
                   "kind": "scalar"
                 }
               },
@@ -460,7 +464,7 @@
               "updatedAt": {
                 "nullable": false,
                 "type": {
-                  "codecId": "pg/timestamptz-temporal@1",
+                  "codecId": "pg/timestamptz-string@1",
                   "kind": "scalar"
                 }
               },
@@ -1033,8 +1037,8 @@
                   "prefix": "problem_difficulty_check"
                 },
                 {
-                  "expression": "\"metaKind\" IN ('function', 'design', 'database')",
-                  "name": "problem_metaKind_check_52b3895e",
+                  "expression": "\"metaKind\" IN ('function', 'design', 'database', 'shell')",
+                  "name": "problem_metaKind_check_518549cd",
                   "prefix": "problem_metaKind_check"
                 }
               ],
@@ -1066,7 +1070,7 @@
                   "nullable": true
                 },
                 "createdAt": {
-                  "codecId": "pg/timestamptz-temporal@1",
+                  "codecId": "pg/timestamptz-string@1",
                   "default": {
                     "expression": "now()",
                     "kind": "function"
@@ -1151,7 +1155,7 @@
                   "nullable": false
                 },
                 "statsFetchedAt": {
-                  "codecId": "pg/timestamptz-temporal@1",
+                  "codecId": "pg/timestamptz-string@1",
                   "default": {
                     "expression": "now()",
                     "kind": "function"
@@ -1175,7 +1179,7 @@
                   "nullable": false
                 },
                 "updatedAt": {
-                  "codecId": "pg/timestamptz-temporal@1",
+                  "codecId": "pg/timestamptz-string@1",
                   "nativeType": "timestamptz",
                   "nullable": false
                 },
@@ -1560,7 +1564,8 @@
               "values": [
                 "function",
                 "design",
-                "database"
+                "database",
+                "shell"
               ]
             }
           }
@@ -1569,10 +1574,10 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "a6d28af586670ef2da9b0aa628acd18d53028059d0040ee74982d9cf3cac8f34"
+    "storageHash": "b20160f7b63f0504cadc8adb3a0507362149cf4e2fc6d149a8d91b9cef508be3"
   },
   "execution": {
-    "executionHash": "de967166cd12e823df10e1f6bd6ee8c51b86815fe9739cfa2efd307c53782777",
+    "executionHash": "bf76665d972690ecfdb49414f9927970592c68a6d7a6ec9673dac9aa21ece346",
     "mutations": {
       "defaults": [
         {
@@ -1599,11 +1604,11 @@
         },
         {
           "onCreate": {
-            "id": "instantNow",
+            "id": "timestampNow",
             "kind": "generator"
           },
           "onUpdate": {
-            "id": "instantNow",
+            "id": "timestampNow",
             "kind": "generator"
           },
           "ref": {
