@@ -55,6 +55,9 @@ claude/
 .claude/
 CLAUDE.md
 AGENTS.md
+.agents
+.cursor
+.devin
 
 # Tooling scratch output
 .playwright-mcp/

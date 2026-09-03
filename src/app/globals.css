@@ -1,20 +1,42 @@
 @import "tailwindcss";
 
-:root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --background: #fffdf8;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+/*
+ * Ten color tokens. Declared in @theme (not :root) so Tailwind generates real
+ * utilities — `text-ink`, `bg-primary` — instead of every call site spelling
+ * out `text-[color:var(--text-h)]`.
+ *
+ * Tints and hover states are NOT tokens. They're opacity modifiers on these
+ * ten: `bg-accent/15`, `bg-success/10`, `hover:bg-primary/90`, `text-ink/70`.
+ * That's what keeps the list short.
+ */
+@theme {
+  /* Neutrals */
+  --color-canvas: #faf9f7;
+  --color-surface: #ffffff;
+  --color-line: #e7e4df;
 
+  /* Text. One color — hierarchy comes from size and weight.
+     Secondary text is text-ink/70 (5.0:1), not a second token. */
+  --color-ink: #2f2f2f;
+
+  /* Brand */
+  --color-primary: #1b1f3b;
+  --color-accent: #7796cb;
+  /* Same hue as --color-accent, darkened until it clears 4.5:1 on both the
+     canvas (5.05:1) and the accent/15 tint it sits on in tags (4.61:1).
+     --color-accent itself is 2.85:1, so it fills but never carries text. */
+  --color-accent-text: #566c92;
+
+  /* Status: Easy / Medium / Hard, and result panels */
+  --color-success: #2f6b4f;
+  --color-warning: #8a5a14;
+  --color-danger: #a33a30;
+
+  --shadow-nav: 0 10px 30px -14px rgba(27, 31, 59, 0.25);
+}
+
+:root {
   --sans: system-ui, "Segoe UI", Roboto, sans-serif;
-  --heading: system-ui, "Segoe UI", Roboto, sans-serif;
   --mono: ui-monospace, Consolas, monospace;
 }
 
@@ -24,8 +46,8 @@
 
 body {
   margin: 0;
-  color: var(--text);
-  background: var(--background);
+  color: var(--color-ink);
+  background: var(--color-canvas);
   font-family: var(--sans);
   min-width: 320px;
 }

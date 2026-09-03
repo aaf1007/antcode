@@ -51,28 +51,28 @@ export default function LoginPage() {
   return (
     <main className="flex items-center mx-auto px-5 sm:px-8 py-16 max-w-6xl min-h-[calc(100vh-4rem)]">
       <section aria-labelledby="login-heading" className="max-w-xl">
-        <p className="font-semibold text-[color:var(--accent)] text-sm uppercase tracking-[0.18em]">
+        <p className="font-semibold text-accent-text text-sm uppercase tracking-[0.18em]">
           AntCode
         </p>
-        <h1 id="login-heading" className="mt-3 font-semibold text-[color:var(--text-h)] text-4xl tracking-tight">
+        <h1 id="login-heading" className="mt-3 font-semibold text-ink text-4xl tracking-tight">
           Sign in
         </h1>
-        <p className="mt-4 text-[color:var(--text)] leading-7">
+        <p className="mt-4 text-ink/70 leading-7">
           Login will be available here soon.
         </p>
 
         {isLoading && (
-          <p className="mt-4 text-[color:var(--text)] text-sm" role="status">
+          <p className="mt-4 text-ink/70 text-sm" role="status">
             Loading accounts…
           </p>
         )}
 
         {!isLoading && error && (
-          <p className="mt-4 text-rose-800 text-sm">{error}</p>
+          <p className="mt-4 text-danger text-sm">{error}</p>
         )}
 
         {!isLoading && !error && (
-          <p className="mt-4 text-[color:var(--text)] text-sm">
+          <p className="mt-4 text-ink/70 text-sm">
             {users.length} {users.length === 1 ? "account" : "accounts"} available
           </p>
         )}

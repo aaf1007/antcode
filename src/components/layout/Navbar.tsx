@@ -2,20 +2,55 @@ import Link from "next/link";
 
 export function Navbar() {
   return (
-    <header className="backdrop-blur border-[color:var(--border)] border-b">
-      <div className="flex justify-between items-center mx-auto px-5 sm:px-8 max-w-5xl min-h-16">
+    <header className="top-0 z-50 sticky px-4 sm:px-6 pt-4 sm:pt-6">
+      <div className="flex justify-between items-center gap-6 bg-surface/80 shadow-nav backdrop-blur mx-auto px-4 sm:px-5 py-2.5 border border-line rounded-2xl max-w-5xl">
         <Link
-          className="focus-visible:rounded-sm outline-none focus-visible:ring-[color:var(--accent)] focus-visible:ring-2 focus-visible:ring-offset-4 font-semibold text-[color:var(--text-h)] hover:text-[color:var(--accent)] text-lg tracking-tight transition-colors"
+          className="flex items-center gap-2.5 focus-visible:rounded-lg outline-none focus-visible:ring-primary focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-surface font-semibold text-ink text-lg tracking-tight transition-colors"
           href="/"
         >
-          Ant<span className="text-[color:var(--accent)]">Code</span>
+          <span
+            aria-hidden="true"
+            className="flex justify-center items-center bg-primary rounded-md size-7 text-canvas"
+          >
+            <svg
+              fill="none"
+              height="14"
+              stroke="currentColor"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2.2"
+              viewBox="0 0 24 24"
+              width="14"
+            >
+              <path d="m6 8 4 4-4 4" />
+              <path d="M13 16h5" />
+            </svg>
+          </span>
+          <span>
+            Ant<span className="text-accent-text">Code</span>
+          </span>
         </Link>
+
         <nav aria-label="Primary navigation">
           <Link
-            className="px-3 py-2 rounded-md outline-none focus-visible:ring-[color:var(--accent)] focus-visible:ring-2 focus-visible:ring-offset-2 font-medium text-[color:var(--text)] hover:text-[color:var(--accent)] text-sm transition-colors hover:bg-[color:var(--accent-bg)]"
-            href="/"
+            className="flex items-center gap-2 hover:bg-ink/5 px-3 py-2 rounded-lg outline-none focus-visible:ring-primary focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-surface font-medium text-ink/70 hover:text-ink text-sm transition-colors"
+            href="/problem"
           >
-            Home
+            <svg
+              aria-hidden="true"
+              fill="none"
+              height="16"
+              stroke="currentColor"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+              width="16"
+            >
+              <path d="m9 8-4 4 4 4" />
+              <path d="m15 8 4 4-4 4" />
+            </svg>
+            Problems
           </Link>
         </nav>
       </div>
