@@ -1,14 +1,4 @@
 @import "tailwindcss";
-
-/*
- * Ten color tokens. Declared in @theme (not :root) so Tailwind generates real
- * utilities — `text-ink`, `bg-primary` — instead of every call site spelling
- * out `text-[color:var(--text-h)]`.
- *
- * Tints and hover states are NOT tokens. They're opacity modifiers on these
- * ten: `bg-accent/15`, `bg-success/10`, `hover:bg-primary/90`, `text-ink/70`.
- * That's what keeps the list short.
- */
 @theme {
   /* Neutrals */
   --color-canvas: #faf9f7;

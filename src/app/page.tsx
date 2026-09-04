@@ -10,12 +10,6 @@ export default function Home() {
           <p className="font-semibold text-sm uppercase tracking-[0.18em] text-accent-text">
             Practice library
           </p>
-          <h2 id="problems-heading" className="mt-3 font-semibold text-ink text-2xl sm:text-3xl tracking-tight">
-            Pick a problem. Build the pattern.
-          </h2>
-          <p className="mt-3 text-ink/70 leading-7">
-            Start with a problem that matches the skills you want to strengthen today.
-          </p>
         </div>
       </section>
     </main>
