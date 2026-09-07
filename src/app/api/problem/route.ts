@@ -14,11 +14,12 @@ export async function GET(request: Request) {
 
     return Response.json({
       problems,
-      nextCursor: problems.at(-1)?.frontendId ?? null,
+      nextCursor: problems.at(-1)?.frontendId ?? null, // this gets the last problem's frontendId, or null if there are no problems
     });
-    
+
   } catch (error) {
     console.error(`GET /api/problem failed (after=${after})`, error);
     return Response.json({ error: "Failed to load problems." }, { status: 500 });
   }
+  
 }

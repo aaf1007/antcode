@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
-import { Navbar } from "@/components/layout/Navbar";
-import { GradientBackground } from "@/components/ui/gradient-background-4";
 import "./globals.css";
+import Providers from "./providers";
 
 export const metadata: Metadata = {
   title: "AntCode",
@@ -14,9 +13,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <GradientBackground />
-        <Navbar />
-        {children}
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

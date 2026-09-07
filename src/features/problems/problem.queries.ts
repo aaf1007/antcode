@@ -14,6 +14,8 @@ export async function getProblemPage({
   limit = PAGE_SIZE,
   after,
 }: ProblemPageOptions = {}): Promise<ProblemList> {
+  
+  // Query db and return a page of problems, ordered by frontendId ascending. If after is provided, return the next page after that frontendId.
   const catalog = db.orm.public.Problem.select(
     "problemId",
     "frontendId",
