@@ -6,20 +6,26 @@ const INT4_MAX = 2_147_483_647;
 
 // GET /api/problem?after=<frontendId>
 export async function GET(request: Request) {
-  const requested = Math.trunc(Number(new URL(request.url).searchParams.get("after")));
+  const requested = Math.trunc(
+    Number(new URL(request.url).searchParams.get("after")),
+  );
   const after = requested ? Math.min(requested, INT4_MAX) : undefined;
 
   try {
     const problems = await getProblemPage({ after });
 
-    return Response.json({
-      problems,
-      nextCursor: problems.at(-1)?.frontendId ?? null, // this gets the last problem's frontendId, or null if there are no problems
-    });
-
+    return Response.json(
+      {
+        problems,
+        nextCursor: problems.at(-1)?.frontendId ?? null, // this gets the last problem's frontendId, or null if there are no problems
+      },
+      { status: 200 },
+    );
   } catch (error) {
     console.error(`GET /api/problem failed (after=${after})`, error);
-    return Response.json({ error: "Failed to load problems." }, { status: 500 });
+    return Response.json(
+      { error: "Failed to load problems." },
+      { status: 500 },
+    );
   }
-  
 }
