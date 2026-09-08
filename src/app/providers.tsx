@@ -2,6 +2,7 @@
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useState } from 'react';
+import { ThemeSync } from '@/components/theme/ThemeSync';
 
 export default function Providers({
   children,
@@ -10,6 +11,7 @@ export default function Providers({
 
   return (
     <QueryClientProvider client={queryClient}>
+      <ThemeSync />
       {children}
     </QueryClientProvider>
   );
