@@ -1,4 +1,5 @@
 import { AppNavbar } from "@/components/layout/AppNavbar";
+import { BackToTop } from "@/components/ui/BackToTop";
 
 export default function AppLayout({
   children,
@@ -7,6 +8,7 @@ export default function AppLayout({
     <>
       <AppNavbar />
       {children}
+      <BackToTop />
     </>
   );
 }

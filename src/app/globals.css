@@ -42,7 +42,7 @@
 :root {
   --sans: system-ui, "Segoe UI", Roboto, sans-serif;
   --mono: ui-monospace, Consolas, monospace;
-  @apply scheme-light scroll-smooth scroll-pt-[120px];
+  @apply scheme-light scroll-pt-[120px] scroll-smooth;
 }
 
 [data-theme="dark"] {
@@ -101,13 +101,13 @@ body {
 }
 
 :focus-visible {
-  @apply outline-2 outline-solid outline-accent-text outline-offset-[5px];
+  @apply outline-2 outline-accent-text outline-solid outline-offset-[5px];
 }
 
 @media (prefers-reduced-motion: reduce) {
   :root { @apply scroll-auto; }
   *, *::before, *::after {
-    @apply [animation-duration:0.01ms]! [animation-iteration-count:1]! duration-[0.01ms]!;
+    @apply duration-[0.01ms]! [animation-duration:0.01ms]! [animation-iteration-count:1]!;
   }
 }
 
