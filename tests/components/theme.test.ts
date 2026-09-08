@@ -1,7 +1,7 @@
+import { themeScript } from "@/components/theme/theme";
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { runInNewContext } from "node:vm";
-import { themeScript } from "./theme";
 
 // Run the actual pre-paint script: a broken fallback or preference precedence
 // would make visitors see the wrong theme before React loads.

@@ -1,7 +1,7 @@
 import "server-only";
 
 import { db } from "../../../database/prisma/db";
-import type { ProblemList } from "./problem.types";
+import type { ProblemItem, ProblemList } from "./problem.types";
 
 export const PAGE_SIZE = 50; // Fixed rows per page
 
@@ -33,6 +33,8 @@ export async function getProblemPage({
   return catalog.cursor({ frontendId: after }).limit(limit).all();
 }
 
-export async function getProblemItem(problemId: string) {
+export async function getProblemItem(
+  problemId: string,
+): Promise<ProblemItem | null> {
   return db.orm.public.Problem.first({ problemId });
 }

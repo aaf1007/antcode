@@ -5,7 +5,7 @@ import { getProblemPage } from "@/features/problems/problem.queries";
 const INT4_MAX = 2_147_483_647;
 
 // GET /api/problem?after=<frontendId>
-export async function GET(request: Request) {
+export async function GET(request: Request): Promise<Response> {
   const requested = Math.trunc(
     Number(new URL(request.url).searchParams.get("after")),
   );
