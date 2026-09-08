@@ -1,41 +1,38 @@
+"use client";
+
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
+import { Icon } from "@/components/ui/Icon";
+import { PrimaryLink } from "@/components/ui/PrimaryLink";
 import Link from "next/link";
+import { useRef, useState } from "react";
+import { Brand } from "./Brand";
 
 export function Navbar() {
-  return (
-    <header className="top-0 z-50 sticky px-4 sm:px-6 pt-4 sm:pt-6">
-      <div className="flex justify-between items-center gap-6 bg-surface/80 shadow-nav backdrop-blur mx-auto px-4 sm:px-5 py-2.5 border border-line rounded-2xl max-w-5xl">
-        <Link
-          className="flex items-center gap-2.5 focus-visible:rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-surface font-semibold text-ink text-lg tracking-tight transition-colors"
-          href="/"
-        >
-          <span>
-            Ant<span className="text-accent-text">Code</span>
-          </span>
-        </Link>
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuButton = useRef<HTMLButtonElement>(null);
 
-        <nav aria-label="Primary navigation">
-          <Link
-            className="flex items-center gap-2 hover:bg-ink/5 px-3 py-2 rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-surface font-medium text-ink/70 hover:text-ink text-sm transition-colors"
-            href="/problem"
-          >
-            <svg
-              aria-hidden="true"
-              fill="none"
-              height="16"
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-              width="16"
-            >
-              <path d="m9 8-4 4 4 4" />
-              <path d="m15 8 4 4-4 4" />
-            </svg>
-            Problems
-          </Link>
-        </nav>
+  return (
+    <header className="sticky top-4 z-50 mx-5 mt-4 max-w-[1080px] min-[640px]:top-6 min-[640px]:mx-8 min-[640px]:mt-6 min-[1244px]:mx-auto" onKeyDown={(event) => {
+      if (event.key === "Escape" && menuOpen) {
+        setMenuOpen(false);
+        menuButton.current?.focus();
+      }
+    }}>
+      <div className="flex min-h-[58px] items-center justify-between gap-4 rounded-[18px] border border-line bg-[color-mix(in_srgb,var(--color-surface)_88%,transparent)] px-3.5 py-2.5 shadow-[var(--shadow-nav),inset_0_1px_0_var(--color-highlight)] backdrop-blur-[18px] min-[640px]:px-5">
+        <Brand />
+        <div className="flex items-center gap-1.5 min-[768px]:gap-3">
+          <ThemeToggle />
+          <span className="hidden min-[768px]:block min-[768px]:h-5.5 min-[768px]:w-px min-[768px]:bg-line" aria-hidden="true" />
+          <PrimaryLink href="/problem" compact>Start coding<Icon name="arrow" width="16" height="16" /></PrimaryLink>
+          <button ref={menuButton} type="button" className="grid size-11 cursor-pointer place-items-center rounded-[10px] text-muted [&:hover]:bg-canvas [&:hover]:text-ink min-[768px]:hidden" aria-expanded={menuOpen} aria-controls="mobile-navigation" aria-label={menuOpen ? "Close navigation" : "Open navigation"} onClick={() => setMenuOpen(!menuOpen)}>
+            <Icon name={menuOpen ? "close" : "menu"} />
+          </button>
+        </div>
       </div>
+      <nav id="mobile-navigation" aria-label="Mobile navigation" className="absolute inset-x-0 top-[calc(100%+8px)] rounded-2xl border border-line bg-surface p-2 shadow-[var(--shadow-nav)] min-[768px]:hidden" hidden={!menuOpen}>
+        <Link href="/problem" className="flex items-center gap-3 rounded-[10px] p-4 font-heading text-[17px] font-semibold [&:hover]:bg-canvas" onClick={() => setMenuOpen(false)}><Icon name="code" />Practice<Icon name="arrow" className="ml-auto" /></Link>
+        <Link href="/#roadmap" className="flex items-center gap-3 rounded-[10px] p-4 font-heading text-[17px] font-semibold [&:hover]:bg-canvas" onClick={() => setMenuOpen(false)}><Icon name="map" />Roadmap<Icon name="arrow" className="ml-auto" /></Link>
+      </nav>
     </header>
   );
 }

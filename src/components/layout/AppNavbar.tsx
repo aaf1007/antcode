@@ -1,7 +1,9 @@
 "use client";
 
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Brand } from "./Brand";
 
 const links = [
   {
@@ -16,15 +18,10 @@ export function AppNavbar() {
   const pathname = usePathname();
 
   return (
-    <header className="sticky top-0 z-50 border-b border-line bg-surface/90 backdrop-blur">
-      <div className="mx-auto flex h-14 max-w-6xl items-center gap-4 px-4 sm:px-6">
-        <div className="flex min-w-0 items-center gap-2 sm:gap-4">
-          <Link
-            href="/"
-            className="shrink-0 font-semibold text-ink text-lg tracking-tight outline-none focus-visible:rounded-lg focus-visible:ring-2 focus-visible:ring-primary"
-          >
-            Ant<span className="text-accent-text">Code</span>
-          </Link>
+    <header className="top-0 z-50 sticky bg-surface/90 backdrop-blur border-line border-b">
+      <div className="flex items-center gap-4 mx-auto px-4 sm:px-6 max-w-6xl h-14">
+        <div className="flex items-center gap-2 sm:gap-4 min-w-0">
+          <Brand />
 
           <nav aria-label="Primary navigation" className="flex items-center gap-1">
             {links.map((link) => {
@@ -38,9 +35,9 @@ export function AppNavbar() {
                   href={link.href}
                   aria-current={isActive ? "page" : undefined}
                   className={[
-                    "flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors outline-none focus-visible:ring-2 focus-visible:ring-primary",
+                    "flex min-h-11 items-center gap-2 px-3 py-2 text-sm font-semibold transition-colors [font-family:var(--font-display)]",
                     isActive
-                      ? "border border-line bg-canvas text-ink"
+                      ? "text-ink underline decoration-ink decoration-2 underline-offset-4"
                       : "text-ink/70 hover:bg-ink/5 hover:text-ink",
                   ].join(" ")}
                 >
@@ -51,6 +48,7 @@ export function AppNavbar() {
             })}
           </nav>
         </div>
+        <div className="ml-auto"><ThemeToggle /></div>
       </div>
     </header>
   );

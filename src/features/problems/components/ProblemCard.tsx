@@ -30,7 +30,7 @@ export function ProblemCard({ problem }: ProblemCardProps) {
           href={problem.url}
           target="_blank"
           rel="noreferrer noopener"
-          className="truncate text-[15px] text-ink hover:text-primary"
+          className="truncate text-[15px] text-ink hover:text-accent-text"
         >
           {problem.frontendId}. {problem.title}
         </a>

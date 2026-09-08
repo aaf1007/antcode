@@ -1,9 +1,23 @@
 @import "tailwindcss";
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+@theme inline {
+  --font-heading: var(--font-display), var(--sans);
+  --font-body: var(--sans);
+  --font-code: var(--mono);
+}
+
 @theme {
   /* Neutrals */
   --color-canvas: #faf9f7;
   --color-surface: #ffffff;
   --color-line: #e7e4df;
+  --color-highlight: #ffffff;
+  --color-muted: #737373;
+  --color-node: #e9eef7;
+  --color-node-line: #bacbe5;
+  --color-connector: #bdc6d3;
 
   /* Text. One color — hierarchy comes from size and weight.
      Secondary text is text-ink/70 (5.0:1), not a second token. */
@@ -22,12 +36,52 @@
   --color-warning: #8a5a14;
   --color-danger: #a33a30;
 
-  --shadow-nav: 0 10px 30px -14px rgba(27, 31, 59, 0.25);
+  --shadow-nav: 0 8px 30px -18px rgba(27, 31, 59, 0.18);
 }
 
 :root {
   --sans: system-ui, "Segoe UI", Roboto, sans-serif;
   --mono: ui-monospace, Consolas, monospace;
+  @apply scheme-light scroll-pt-[120px] scroll-smooth;
+}
+
+[data-theme="dark"] {
+  @apply scheme-dark;
+  --color-canvas: #1c1d1f;
+  --color-surface: #222325;
+  --color-line: #343538;
+  --color-highlight: #ffffff05;
+  --color-ink: #efefed;
+  --color-muted: #a2a3a6;
+  --color-accent-text: #93aeda;
+  --color-success: #83b89b;
+  --color-warning: #d9af71;
+  --color-danger: #ec968d;
+  --color-node: #2a3446;
+  --color-node-line: #4d6283;
+  --color-connector: #626976;
+  --shadow-nav: 0 8px 30px -14px #00000055;
+}
+
+/* Preserve the system theme even when JavaScript is unavailable. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    @apply scheme-dark;
+    --color-canvas: #1c1d1f;
+    --color-surface: #222325;
+    --color-line: #343538;
+    --color-highlight: #ffffff05;
+    --color-ink: #efefed;
+    --color-muted: #a2a3a6;
+    --color-accent-text: #93aeda;
+    --color-success: #83b89b;
+    --color-warning: #d9af71;
+    --color-danger: #ec968d;
+    --color-node: #2a3446;
+    --color-node-line: #4d6283;
+    --color-connector: #626976;
+    --shadow-nav: 0 8px 30px -14px #00000055;
+  }
 }
 
 * {
@@ -40,6 +94,21 @@ body {
   background: var(--color-canvas);
   font-family: var(--sans);
   min-width: 320px;
+}
+
+::selection {
+  @apply bg-accent text-primary;
+}
+
+:focus-visible {
+  @apply outline-2 outline-accent-text outline-solid outline-offset-[5px];
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { @apply scroll-auto; }
+  *, *::before, *::after {
+    @apply duration-[0.01ms]! [animation-duration:0.01ms]! [animation-iteration-count:1]!;
+  }
 }
 
 button,
