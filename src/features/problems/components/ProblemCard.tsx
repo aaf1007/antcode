@@ -1,4 +1,5 @@
 import type { Difficulty, ProblemListItem } from "@/features/problems/problem.types";
+import Link from "next/link";
 
 const difficultyLabel: Record<Difficulty, string> = {
   Easy: "Easy",
@@ -25,7 +26,7 @@ export function ProblemCard({ problem }: ProblemCardProps) {
           aria-hidden
         >
         </span>
-        <a
+        <Link
           id={`problem-${problem.problemId}`}
           href={problem.url}
           target="_blank"
@@ -33,7 +34,7 @@ export function ProblemCard({ problem }: ProblemCardProps) {
           className="truncate text-[15px] text-ink hover:text-accent-text"
         >
           {problem.frontendId}. {problem.title}
-        </a>
+        </Link>
       </div>
 
       <span className="text-right tabular-nums text-ink/70">
