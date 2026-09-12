@@ -3,7 +3,7 @@ import { Icon } from "@/components/ui/Icon";
 
 export function PracticeCards() {
   return (
-    <section id="practice" aria-labelledby="practice-heading" className="max-w-[900px] scroll-mt-[120px] pb-16 min-[1024px]:pb-[var(--home-space)]">
+    <section id="practice" aria-labelledby="practice-heading" className="scroll-mt-[120px] pb-12 min-[640px]:pb-14">
       <div className="mb-4 flex items-center justify-between gap-3">
         <h2 id="practice-heading" className="font-code text-[10px] font-normal tracking-[0.12em] text-muted min-[640px]:text-[11px]">FIND YOUR NEXT CHALLENGE</h2>
         <Link href="/problem" className="hidden items-center gap-2 text-[12px] text-muted [&:hover]:text-accent-text min-[640px]:inline-flex min-[640px]:min-h-8">View all problems<Icon name="arrow" width="15" height="15" /></Link>

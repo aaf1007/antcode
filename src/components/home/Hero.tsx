@@ -4,7 +4,7 @@ import { LearningRoadmap } from "./LearningRoadmap";
 
 export function Hero() {
   return (
-    <section aria-labelledby="hero-heading" className="grid gap-16 pt-16 pb-14 min-[640px]:pt-20 min-[1024px]:grid-cols-[1fr_1.08fr] min-[1024px]:items-center min-[1024px]:gap-13 min-[1024px]:py-[var(--home-space)] min-[1244px]:gap-16">
+    <section aria-labelledby="hero-heading" className="grid gap-12 pt-10 pb-12 min-[640px]:gap-14 min-[640px]:pt-12 min-[640px]:pb-14 min-[1024px]:grid-cols-[1fr_1.08fr] min-[1024px]:items-center min-[1024px]:gap-13 min-[1024px]:pt-[clamp(32px,5svh,56px)] min-[1024px]:pb-[clamp(40px,6svh,64px)] min-[1244px]:gap-16">
       <div className="min-w-0">
         <p className="inline-flex items-center gap-[9px] rounded-[100px] border border-line px-[11px] py-[7px] font-code text-[10px] tracking-[0.015em] text-muted min-[400px]:text-[11px]">
           <span aria-hidden="true" className="size-[5px] shrink-0 rounded-full bg-accent shadow-[0_0_0_3px_color-mix(in_srgb,var(--color-accent)_12%,transparent)]" />
@@ -14,7 +14,7 @@ export function Hero() {
           <span className="mb-[9px] block text-[clamp(30px,8vw,48px)] leading-[1.2] tracking-normal min-[1024px]:mb-[clamp(6px,1svh,12px)] min-[1024px]:text-[clamp(28px,4svh,47px)]">A better way to</span>
           Prepare<span className="text-accent">.</span>
         </h1>
-        <p className="mt-6.5 max-w-[445px] text-[16px] leading-[1.8] text-muted min-[640px]:text-[17px] min-[1024px]:mt-[var(--home-space)] min-[1024px]:text-[clamp(14px,2svh,17px)] min-[1024px]:leading-[1.6]">
+        <p className="mt-6.5 max-w-[445px] text-pretty text-[16px] leading-[1.8] text-muted min-[640px]:text-[17px] min-[1024px]:mt-[var(--home-space)] min-[1024px]:text-[clamp(14px,2svh,17px)] min-[1024px]:leading-[1.6]">
           Build confidence for your next coding interview.
           Learn the patterns, connect the dots, and make progress
           one problem at a time.
