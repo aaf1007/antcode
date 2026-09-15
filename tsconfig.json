@@ -1,44 +1,15 @@
 {
+  "extends": "./client/tsconfig.json",
   "compilerOptions": {
-    "target": "ES2017",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "noEmit": true,
-    "esModuleInterop": true,
-    "module": "preserve",
-    "moduleResolution": "bundler",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "jsx": "react-jsx",
-    "incremental": true,
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
-    "paths": {
-      "@/*": [
-        "./src/*"
-      ]
-    },
     "types": [
       "node"
     ]
   },
   "include": [
-    "next-env.d.ts",
-    ".next/types/**/*.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    ".next/dev/types/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules"
+    "client/vite.config.ts",
+    "prisma.config.ts",
+    "server/src/db/seed/**/*.ts",
+    "client/tests/**/*.ts",
+    "server/tests/**/*.ts"
   ]
 }

@@ -4,26 +4,31 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+    "dev": "concurrently --kill-others --names web,api \"npm:dev:client\" \"npm:dev:server\"",
+    "dev:client": "vite --config client/vite.config.ts",
+    "dev:server": "tsx watch server/src/server.ts --dev",
+    "build": "npm run typecheck && npm run build:client && npm run build:server",
+    "build:client": "vite build --config client/vite.config.ts",
+    "build:server": "tsc -p server/tsconfig.json",
+    "start": "node server/dist/server.js",
     "lint": "eslint .",
-    "test": "node --import tsx --conditions=react-server --experimental-test-module-mocks --test \"tests/**/*.test.ts\"",
-    "seed": "node --import tsx database/seed/problems.ts",
+    "typecheck": "tsc -p client/tsconfig.json && tsc -p server/tsconfig.json --noEmit && tsc --noEmit",
+    "test": "node --experimental-test-module-mocks --import tsx --test \"client/tests/**/*.test.ts\" \"server/tests/**/*.test.ts\"",
+    "seed": "node --import tsx server/src/db/seed/problems.ts",
     "contract:emit": "prisma contract emit",
     "postinstall": "prisma skills sync || exit 0"
   },
   "dependencies": {
-    "@next/env": "^16.3.3",
     "@prisma/orm-postgres": "^8.0.0-rc.8",
     "@tanstack/react-query": "^5.102.8",
     "dotenv": "^17.4.2",
-    "next": "^16.3.3",
     "pg": "^8.23.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "react-intersection-observer": "^11.0.1",
-    "server-only": "^0.0.1"
+    "express": "^5.2.1",
+    "react-router": "^7.0.0",
+    "@fontsource-variable/josefin-sans": "^5.3.0"
   },
   "devDependencies": {
     "@prisma/cli-engine": "^0.2.3",
@@ -32,10 +37,21 @@
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.5",
     "eslint": "^9.39.5",
-    "eslint-config-next": "^16.3.3",
     "prisma": "^8.0.0-rc.10",
     "tailwindcss": "^4.3.3",
     "tsx": "^4.23.13",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "vite": "^8.3.0",
+    "@vitejs/plugin-react": "^6.1.1",
+    "@types/express": "^5.0.0",
+    "concurrently": "^9.0.0",
+    "@eslint/js": "^9.39.0",
+    "typescript-eslint": "^8.0.0",
+    "eslint-plugin-react-hooks": "^7.0.0",
+    "eslint-plugin-react-refresh": "^0.5.0",
+    "globals": "^17.0.0"
+  },
+  "engines": {
+    "node": ">=22.12.0"
   }
 }

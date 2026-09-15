@@ -1,102 +1,132 @@
 # AntCode
 
-Learn to code and practice for coding interviews
+Learn to code and practice for coding interviews. AntCode is a student-focused
+platform for algorithm practice, with plans for coding submissions, AI hints,
+and progress tracking.
 
-## Introduction
-
-A friendly platform for learning and practicing to code that is tailored for students.
-
-Designed for students to practice algorithmic problem solving, receive AI feedback and track progress.
-
-Stack: Next.js 16, React 19, PostgreSQL 18, Prisma Next (Prisma 8), Tailwind CSS 4
-
-Plans:
-- LeetCode style questions with custom learning and preparation paths (similar to NeetCode 250)
-- Coding sandbox editor with judge for submissions
-- AI hint generator for coding questions
+Stack: React 19, Vite 8, React Router 7, Express 5, TanStack Query,
+Tailwind CSS 4, PostgreSQL 18, and Prisma 8 (Prisma Next).
 
 ## Development
 
+Use Node.js **22.12+** (Node 24 LTS recommended) and npm.
+
 ```bash
 npm install
-npm run dev            # http://localhost:3000/
-npm test
+cp .env.example .env       # on a fresh clone; keep your existing .env
+```
+
+Follow [server/src/docs/DB_SETUP.md](server/src/docs/DB_SETUP.md) to start PostgreSQL and initialize
+and seed a fresh database. Existing databases and Prisma contracts continue
+working with this application; the framework migration needs no schema change.
+
+```bash
+npm run dev               # frontend at http://localhost:3000; API at :3001
+npm test                  # HTTP and theme tests; no database required
+npm run typecheck         # browser, backend, and tooling TypeScript
+npm run lint
+npm run build             # typecheck and build both frontend and backend
+npm run contract:emit     # regenerate DB artifacts after schema edits
+npm run seed              # clears and reloads the problem catalog
+```
+
+`npm run dev` starts Vite and Express together and stops both when you exit.
+Vite provides React hot reload and proxies `/api` to Express. `tsx watch`
+restarts Express when backend files change. You can also run `npm run dev:client`
+and `npm run dev:server` in separate terminals.
+
+The `.env` file contains `DATABASE_URL`; only the backend reads the database
+connection. `API_PORT` changes the development backend port (default 3001).
+Restart development after changing environment variables. Vite always uses
+port 3000 unless you pass a CLI override to `dev:client`.
+
+## Production
+
+```bash
+npm ci
 npm run build
-npm run contract:emit  # regenerate DB types after editing the schema
-npm run seed           # not implemented yet
+npm start
 ```
 
-The database runs in Docker and needs a one-time setup before `npm run dev` is
-useful. See **[docs/DB_SETUP.md](docs/DB_SETUP.md)** — start there on a fresh
-clone.
+`npm start` runs only the Express API on port 3000. Set `PORT` and `HOST`
+to change its listener. Supply `DATABASE_URL` through the deployment environment
+or the root `.env` file. The backend can be built independently with
+`npm run build:server` and does not require a client build.
 
-The connection string is read from `DATABASE_URL` in the root `.env` file. Copy
-`.env.example` to `.env` to get the default that matches `docker-compose.yml`.
+Deploy `server/dist/`, `package.json`, and `package-lock.json` to the backend
+host. Install runtime dependencies with `npm ci --omit=dev --ignore-scripts`
+and run `npm start` from that deployment root.
 
-## Project Structure
+Build the frontend with `npm run build:client` and publish `client/dist/` to
+its own static host. Configure that host to proxy `/api` requests to Express,
+and to serve `index.html` for frontend page routes such as `/problem/p_1`.
+The frontend uses relative `/api` URLs, so the proxy must take precedence over
+the frontend fallback. Express serves no frontend HTML or assets.
+
+## Routes
+
+| Route | Purpose |
+| --- | --- |
+| `/` | Homepage |
+| `/problem` | Paginated problem catalog |
+| `/problem/:problemId` | Problem details |
+| `GET /api/problem?after=<frontendId>` | `{ problems, nextCursor }` |
+| `GET /api/problem/:problemId` | `{ problem }`, or a JSON 404 |
+
+The API keeps the existing successful response bodies and page size.
+Unexpected failures return HTTP 500 with `{ "error": "Internal server error." }`.
+Malformed JSON and URL parameters return JSON 400 responses; oversized bodies
+return 413 and unsupported body encodings return 415. API routes also support
+HEAD and OPTIONS; unsupported methods return 405.
+
+## Project structure
 
 ```text
-database/                   # Everything about the database lives here
-├── prisma/
-│   ├── contract.prisma     # The schema — the only file you edit
-│   ├── contract.json       # Generated, do not edit
-│   ├── contract.d.ts       # Generated, do not edit
-│   └── db.ts               # The database client
-├── migrations/             # Generated migration packages (committed)
-└── raw/                    # Source datasets used for seeding
-
-src/
-├── app/                    # Next.js pages, layouts, and API route handlers
-├── components/             # General UI shared across the application
-└── features/               # Product/domain code grouped by feature
-    ├── problems/
-    │   ├── components/     # Problem-specific UI
-    │   ├── data/           # Problem seed data
-    │   ├── problem.repository.ts
-    │   ├── problem.service.ts
-    │   └── problem.types.ts
-    └── users/              # User-specific data and behavior
+client/
+├── src/                   # React pages, components, features, and app setup
+├── public/                # Static assets
+├── tests/                 # Frontend and generated-HTML tests
+├── index.html
+├── vite.config.ts
+├── postcss.config.mjs
+└── tsconfig.json
+server/
+├── src/
+│   ├── db/                # Prisma client, repositories, schema, migrations, seed data
+│   ├── docs/              # Backend architecture and database guides
+│   ├── middleware/        # Shared Express middleware
+│   ├── routes/            # Routers with inline router.get callbacks
+│   ├── services/          # Application logic
+│   ├── types/             # API data shapes
+│   ├── app.ts             # Exported Express API app
+│   ├── config.ts          # Environment and ports
+│   └── server.ts          # Port validation and API listener
+├── tests/                 # API and service tests
+└── tsconfig.json
+package.json               # One install and shared commands for both apps
+prisma.config.ts           # Points Prisma to server/src/db
 ```
 
-### Folder conventions
+Browser components use relative `/api` URLs. Keep database queries and Node
+runtime dependencies under `server/src/`. Requests flow through
+`routes → services → db` through direct imports. Route files register inline
+callbacks with `router.get(...)`; services export ordinary functions.
+`app.ts` exports the configured Express app and `server.ts` starts it. Browser code may import
+**types** from `server/src/types`; ESLint rejects runtime server imports, and
+Vite serves only the client and its dependencies. See
+[the backend architecture guide](server/src/docs/ARCHITECTURE.md) for responsibilities.
 
-- `database` owns every data concern: the schema, the generated types, the
-  migration history, and the raw datasets we seed from. It sits outside `src`
-  because it is not application source — it is the data layer the application
-  is built on, and `raw/` in particular holds large files that should never be
-  pulled into the app bundle.
-- `app` contains Next.js entry points. Pages compose components and API route
-  handlers translate HTTP requests into calls to feature services. Keep these
-  files thin; business logic does not belong here.
-- `components` contains general React components that are not owned by one
-  feature, such as navigation and homepage layout components.
-- `features` contains code tied to a product capability. Models, repositories,
-  services, types, data, tests, and feature-specific components stay with the
-  feature that owns them.
-- `lib` is reserved for feature-independent infrastructure such as logging,
-  storage clients, and generic utilities. It does not exist yet — create
-  `src/lib/` when there is something genuinely shared to put in it, and keep
-  problem, user, or other business-specific rules out of it.
+Run all npm commands from the repository root. The root `.env`, lockfile, and
+package manifest are shared; production outputs are `client/dist` and `server/dist`.
 
-React components have only two homes:
+`npm test` uses Node's native module mocks to replace database queries while
+exercising the real routes and services over HTTP. The test command enables
+`--experimental-test-module-mocks`; no running database is needed for these tests.
 
-1. `src/components` for general or application-wide UI.
-2. `src/features/<feature>/components` for feature-specific UI.
+`server/src/db/prisma/contract.prisma` remains the schema source of truth. Never edit
+`contract.json` or `contract.d.ts` manually. Run `npm run contract:emit` after
+changing the schema, then follow the database setup guide for migrations.
 
-Dependencies should flow in one direction:
-
-```text
-app → features → database
-```
-
-A feature may import the client from `database/prisma/db` and shared helpers
-from `lib`, but neither may import from a feature. As a quick test, if deleting
-a feature would also remove a file, that file belongs inside the feature.
-
-### Working with the schema
-
-The schema is contract-first: `database/prisma/contract.prisma` is the single
-source of truth, and `contract.json` / `contract.d.ts` are generated from it.
-After any schema edit, run `npm run contract:emit` — otherwise your types and
-the database planner are working from a stale copy.
-
+The theme initializer is shared by React and Vite's HTML transform, so the saved
+light/dark preference applies before the app paints. Josefin Sans is self-hosted
+from the Fontsource package; no Google Fonts request is needed at runtime.
