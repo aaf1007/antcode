@@ -61,6 +61,8 @@ AGENTS.md
 
 # Tooling scratch output
 .playwright-mcp/
+.playwright-cli/
+output/playwright/
 
 # Deploy
 .vercel/
