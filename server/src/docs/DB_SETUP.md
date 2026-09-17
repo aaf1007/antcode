@@ -86,7 +86,7 @@ npm run dev
 ```
 
 Open http://localhost:3000. Vite serves React and proxies `/api` to Express on
-port 3001. Only Express connects to PostgreSQL. For production, run
+port 5001. Only Express connects to PostgreSQL. For production, run
 `npm run build` followed by `npm start`; Express serves both the frontend and API.
 
 ## Day-to-day: changing the schema

@@ -21,7 +21,7 @@ and seed a fresh database. Existing databases and Prisma contracts continue
 working with this application; the framework migration needs no schema change.
 
 ```bash
-npm run dev               # frontend at http://localhost:3000; API at :3001
+npm run dev               # frontend at http://localhost:3000; API at :5001
 npm test                  # HTTP and theme tests; no database required
 npm run typecheck         # browser, backend, and tooling TypeScript
 npm run lint
@@ -36,7 +36,7 @@ restarts Express when backend files change. You can also run `npm run dev:client
 and `npm run dev:server` in separate terminals.
 
 The `.env` file contains `DATABASE_URL`; only the backend reads the database
-connection. `API_PORT` changes the development backend port (default 3001).
+connection. `API_PORT` changes the development backend port (default 5001).
 Restart development after changing environment variables. Vite always uses
 port 3000 unless you pass a CLI override to `dev:client`.
 

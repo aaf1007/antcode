@@ -55,7 +55,7 @@ Modules use direct imports. Services are plain exported functions; there is no
 app/router/service factory chain or separate handler layer. To add an endpoint,
 register a callback on its router and call the corresponding service function.
 
-Run `npm run dev:server` from the repository root for the API on port 3001.
+Run `npm run dev:server` from the repository root for the API on port 5001.
 Run `npm run build:server` to emit JavaScript to `server/dist`. The production
 entry is `server/dist/server.js`, which serves only the API. It has no dependency
 on `client/dist`; frontend hosting and page fallbacks belong to the frontend host.

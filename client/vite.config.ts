@@ -25,7 +25,7 @@ export default defineConfig(({ mode }) => {
       host: "0.0.0.0",
       port: 3000,
       strictPort: true,
-      proxy: { "/api": `http://127.0.0.1:${env.API_PORT || 3001}` },
+      proxy: { "/api": `http://127.0.0.1:${env.API_PORT || 5001}` },
       fs: {
         allow: [import.meta.dirname, fileURLToPath(new URL("../node_modules", import.meta.url))],
         deny: [".env", ".env.*", "*.{crt,pem}", "**/.git/**", "**/database/**", "**/server/**"],
