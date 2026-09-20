@@ -1,15 +1,15 @@
-import type { ProblemItem, ProblemListItem } from "../../src/types/problem.types.ts";
-import { serve } from "../helpers/http.ts";
-import { stubRepository } from "../helpers/repository.ts";
 import assert from "node:assert/strict";
 import { test, type TestContext } from "node:test";
+import type { ProblemItem, ProblemListItem } from "../../src/types/problem.types.ts";
+import { serve } from "../helpers/http.ts";
+import { stubCatalog } from "../helpers/catalog.ts";
 
 const { default: app } = await import("../../src/app.ts");
 
-async function setup(t: TestContext, overrides: Parameters<typeof stubRepository>[1] = {}) {
-  stubRepository(t, {
-    getProblemPage: async () => [listItem],
-    getProblemItem: async () => problemItem,
+async function setup(t: TestContext, overrides: Parameters<typeof stubCatalog>[1] = {}) {
+  stubCatalog(t, {
+    listProblems: async () => ({ problems: [listItem], nextCursor: null }),
+    findProblem: async () => problemItem,
     ...overrides,
   });
   t.mock.method(console, "error", () => {});
@@ -29,80 +29,35 @@ const listItem: ProblemListItem = {
 
 const problemItem: ProblemItem = {
   ...listItem,
-  questionId: 1,
   slug: "two-sum",
-  contentHtml: null,
   contentText: "Given an array of integers...",
-  metaKind: "function",
-  metaData: {},
-  exampleInputAll: "[2,7,11,15]",
   exampleInputFirst: "[2,7,11,15]",
   likes: 100,
   dislikes: 10,
   totalAccepted: 1000,
   totalSubmitted: 2000,
-  statsFetchedAt: "2026-09-08T00:00:00.000Z",
-  createdAt: "2026-09-08T00:00:00.000Z",
-  updatedAt: "2026-09-08T00:00:00.000Z",
 };
 
-test("GET /api/problem returns problems and the next cursor", async (t) => {
+test("GET /api/problem passes the first cursor value to the catalog", async (t) => {
   let received: unknown;
-  const request = await setup(t, { getProblemPage: async (options) => {
-    received = options;
-    return [listItem];
-  } });
-  const response = await request("/api/problem?after=10");
-  assert.equal(response.status, 200);
-  assert.deepEqual(await response.json(), { problems: [listItem], nextCursor: 1 });
-  assert.deepEqual(received, { after: 10 });
-});
-
-for (const [query, after] of [
-  ["", undefined], ["?after=0", undefined], ["?after=garbage", undefined],
-  ["?after=-999999999999", undefined], ["?after=10.9", 10],
-  ["?after=999999999999", 2_147_483_647], ["?after=Infinity", 2_147_483_647],
-  ["?after=2147483647", 2_147_483_647], ["?after=2147483648", 2_147_483_647],
-  ["?after=10&after=20", 10], ["?after=garbage&after=20", undefined],
-] as const) {
-  test(`GET /api/problem normalizes cursor ${query || "(absent)"}`, async (t) => {
-    let received: unknown;
-    const request = await setup(t, { getProblemPage: async (options) => {
-      received = options;
-      return [];
-    } });
-    const response = await request(`/api/problem${query}`);
-    assert.equal(response.status, 200);
-    assert.deepEqual(await response.json(), { problems: [], nextCursor: null });
-    assert.deepEqual(received, { after });
+  const request = await setup(t, {
+    listProblems: async (cursor) => {
+      received = cursor;
+      return { problems: [listItem], nextCursor: null };
+    },
   });
-}
 
-test("GET /api/problem pages past a full 50-row page and ends with a null cursor", async (t) => {
-  const firstPage = Array.from({ length: 50 }, (_, index) => ({
-    ...listItem, problemId: `p_${index + 1}`, frontendId: index + 1,
-  }));
-  const lastProblem = { ...listItem, problemId: "p_51", frontendId: 51 };
-  const request = await setup(t, { getProblemPage: async ({ after } = {}) => {
-    if (after === undefined) return firstPage;
-    if (after === 50) return [lastProblem];
-    if (after === 51) return [];
-    throw new Error(`Unexpected pagination cursor: ${after}`);
-  } });
+  const response = await request("/api/problem?after=10&after=20");
 
-  const first = await request("/api/problem");
-  assert.equal(first.status, 200);
-  assert.deepEqual(await first.json(), { problems: firstPage, nextCursor: 50 });
-  const last = await request("/api/problem?after=50");
-  assert.equal(last.status, 200);
-  assert.deepEqual(await last.json(), { problems: [lastProblem], nextCursor: 51 });
-  const empty = await request("/api/problem?after=51");
-  assert.equal(empty.status, 200);
-  assert.deepEqual(await empty.json(), { problems: [], nextCursor: null });
+  assert.equal(response.status, 200);
+  assert.deepEqual(await response.json(), { problems: [listItem], nextCursor: null });
+  assert.equal(received, "10");
 });
 
-test("GET /api/problem returns a generic 500 on database failure", async (t) => {
-  const request = await setup(t, { getProblemPage: async () => { throw new Error("private database details"); } });
+test("GET /api/problem returns a generic 500 on catalog failure", async (t) => {
+  const request = await setup(t, {
+    listProblems: async () => { throw new Error("private database details"); },
+  });
   const response = await request("/api/problem");
   assert.equal(response.status, 500);
   assert.deepEqual(await response.json(), { error: "Internal server error." });
@@ -110,10 +65,9 @@ test("GET /api/problem returns a generic 500 on database failure", async (t) => 
 
 test("GET /api/problem/:problemId returns a problem and decodes its id", async (t) => {
   let received: unknown;
-  const request = await setup(t, { getProblemItem: async (id) => {
-    received = id;
-    return problemItem;
-  } });
+  const request = await setup(t, {
+    findProblem: async (id) => { received = id; return problemItem; },
+  });
   const response = await request("/api/problem/two%20sum");
   assert.equal(response.status, 200);
   assert.deepEqual(await response.json(), { problem: problemItem });
@@ -121,14 +75,16 @@ test("GET /api/problem/:problemId returns a problem and decodes its id", async (
 });
 
 test("GET /api/problem/:problemId returns 404 for a missing problem", async (t) => {
-  const request = await setup(t, { getProblemItem: async () => null });
+  const request = await setup(t, { findProblem: async () => null });
   const response = await request("/api/problem/missing");
   assert.equal(response.status, 404);
   assert.deepEqual(await response.json(), { error: "Problem not found." });
 });
 
-test("GET /api/problem/:problemId returns a generic 500 on database failure", async (t) => {
-  const request = await setup(t, { getProblemItem: async () => { throw new Error("private database details"); } });
+test("GET /api/problem/:problemId returns a generic 500 on catalog failure", async (t) => {
+  const request = await setup(t, {
+    findProblem: async () => { throw new Error("private database details"); },
+  });
   const response = await request("/api/problem/two-sum");
   assert.equal(response.status, 500);
   assert.deepEqual(await response.json(), { error: "Internal server error." });
@@ -222,10 +178,15 @@ test("JSON with an unsupported content encoding returns a generic JSON 415", asy
 });
 
 for (const status of [400, undefined]) {
-  test(`unrecognized database errors with status ${status} remain generic JSON 500`, async (t) => {
-    const request = await setup(t, { getProblemPage: async () => {
-      throw Object.assign(new Error("private database details"), { status, type: "database.query.failed" });
-    } });
+  test(`unrecognized catalog errors with status ${status} remain generic JSON 500`, async (t) => {
+    const request = await setup(t, {
+      listProblems: async () => {
+        throw Object.assign(new Error("private database details"), {
+          status,
+          type: "database.query.failed",
+        });
+      },
+    });
     const response = await request("/api/problem");
     assert.equal(response.status, 500);
     assert.deepEqual(await response.json(), { error: "Internal server error." });

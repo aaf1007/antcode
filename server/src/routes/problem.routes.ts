@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { listProblems, getProblemItem } from "../services/problem.service.ts";
+import { findProblem, listProblems } from "../problems/problem.catalog.ts";
 
 const router = Router();
 
@@ -9,7 +9,7 @@ const router = Router();
  * nextCursor. Missing, nonnumeric, or nonpositive values start at the first page.
  * Decimal values are truncated; positive cursors beyond int4 are clamped.
  * Response 200: `{ problems, nextCursor }` with up to 50 problems. nextCursor
- * is the last returned frontendId, or null when the page is empty.
+ * is the final returned frontendId when another page exists, otherwise null.
  */
 router.get("/", async (req, res) => {
   const queryAfter = req.query.after;
@@ -25,7 +25,7 @@ router.get("/", async (req, res) => {
  * Response 200: `{ problem }`; response 404: `{ error: "Problem not found." }`.
  */
 router.get("/:problemId", async (req, res) => {
-  const problem = await getProblemItem(req.params.problemId);
+  const problem = await findProblem(req.params.problemId);
 
   if (!problem) {
     res.status(404).json({ error: "Problem not found." });

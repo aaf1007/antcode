@@ -1,25 +1,37 @@
-import type { FieldOutputTypes } from "../db/prisma/contract.d.ts";
+export type Difficulty = "Easy" | "Medium" | "Hard";
 
-type ProblemRow = FieldOutputTypes["public"]["Problem"];
+export type Category =
+  | "Algorithms"
+  | "Database"
+  | "Shell"
+  | "Concurrency"
+  | "JavaScript"
+  | "pandas";
 
-export type ProblemItem = ProblemRow;
-export type Difficulty = ProblemRow["difficulty"];
-export type Category = ProblemRow["category"];
+export type ProblemListItem = {
+  problemId: string;
+  frontendId: number;
+  title: string;
+  url: string;
+  difficulty: Difficulty;
+  category: Category;
+  isPremium: boolean;
+  acRate: number;
+};
 
-export type ProblemListItem = Pick<
-  ProblemRow,
-  | "problemId"
-  | "frontendId"
-  | "title"
-  | "url"
-  | "difficulty"
-  | "category"
-  | "isPremium"
-  | "acRate"
->;
+export type ProblemItem = ProblemListItem & {
+  slug: string;
+  contentText: string | null;
+  exampleInputFirst: string;
+  likes: number;
+  dislikes: number;
+  totalAccepted: number;
+  totalSubmitted: number;
+};
 
 export type ProblemList = ProblemListItem[];
 
-export type ProblemPageOptions = { limit?: number; after?: number };
-
-export type ProblemPage = { problems: ProblemList; nextCursor: number | null };
+export type ProblemPage = {
+  problems: ProblemList;
+  nextCursor: number | null;
+};

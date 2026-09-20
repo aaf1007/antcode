@@ -7,7 +7,6 @@ code lives entirely under `server/src`, with tests under `server/tests`.
 server/
 ├── src/
 │   ├── db/
-│   │   ├── problem.repository.ts
 │   │   ├── prisma/                # Client and contract artifacts
 │   │   ├── migrations/
 │   │   ├── raw/
@@ -15,10 +14,10 @@ server/
 │   ├── docs/
 │   ├── middleware/
 │   │   └── error-handler.ts
+│   ├── problems/
+│   │   └── problem.catalog.ts
 │   ├── routes/
 │   │   └── problem.routes.ts
-│   ├── services/
-│   │   └── problem.service.ts
 │   ├── types/
 │   │   └── problem.types.ts
 │   ├── app.ts
@@ -28,15 +27,16 @@ server/
 └── tsconfig.json
 ```
 
-Requests flow through **routes → services → db**:
+Problem requests flow through **route → problem catalog → Prisma**:
 
 - `routes` exports Express routers with inline `router.get(...)` callbacks.
-  Each callback reads HTTP parameters, calls an imported service function, and
-  sends a response. Express 5 forwards async failures to the error middleware.
-- `services` implements application behavior, such as cursor normalization and
-  pagination responses. It does not depend on Express or create DB connections.
-- `db` owns Prisma queries, the database client, schema artifacts, migrations,
-  and seed data. It does not import routes or React components.
+  Each callback reads HTTP parameters, calls the problem catalog, and sends a
+  response. Express 5 forwards async failures to the error middleware.
+- `problems/problem.catalog.ts` owns problem lookup, cursor normalization,
+  pagination, and the public database projections. This keeps the module's
+  interface small without adding pass-through service and repository layers.
+- `db` owns the Prisma client, contract artifacts, migrations, raw data, and
+  seed data. It does not import routes or React components.
 - `middleware` handles shared HTTP concerns. Unexpected failures are logged
   server-side and return HTTP 500 with `{ "error": "Internal server error." }`.
   Malformed JSON and URL parameters return HTTP 400. Known body-parser client
@@ -46,14 +46,14 @@ Requests flow through **routes → services → db**:
   `import type` only.
 - `app.ts` exports the configured Express app, registering JSON parsing, API
   routes, API 404s, and the error middleware in order.
-- `config.ts` loads the root environment and exports the development mode,
-  port, and host before Express initializes.
-- `server.ts` validates the port, opens the listener, and exits on startup errors.
+- `config.ts` loads the root environment, validates the port, and exports the
+  development mode, port, and host before Express initializes.
+- `server.ts` opens the listener and exits on startup errors.
   It uses normal process termination; active requests are not drained on exit.
 
-Modules use direct imports. Services are plain exported functions; there is no
-app/router/service factory chain or separate handler layer. To add an endpoint,
-register a callback on its router and call the corresponding service function.
+Modules use direct imports; there is no app/router factory chain or separate
+handler layer. To add a problem endpoint, register a callback on its router and
+call the corresponding catalog function.
 
 Run `npm run dev:server` from the repository root for the API on port 5001.
 Run `npm run build:server` to emit JavaScript to `server/dist`. The production
@@ -69,8 +69,8 @@ See [DB_SETUP.md](DB_SETUP.md) for database setup.
 ## Verification
 
 Run `npm test`, `npm run typecheck`, `npm run lint`, and `npm run build` from
-the repository root. Tests replace repository exports with Node's native module
-mocks before loading the app, then exercise the real routes and service logic.
+the repository root. API tests replace catalog exports with Node's native module
+mocks before loading the app, while catalog tests replace the Prisma adapter.
 API boundary tests verify that frontend pages and assets return 404.
 The test command enables `--experimental-test-module-mocks`; these tests do not
 need a database connection. Live smoke checks use the existing local database

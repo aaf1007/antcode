@@ -1,13 +1,13 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { serve } from "../helpers/http.ts";
-import { stubRepository } from "../helpers/repository.ts";
+import { stubCatalog } from "../helpers/catalog.ts";
 
 process.env.NODE_ENV = "production";
 const { default: app } = await import("../../src/app.ts");
 
 test("production is API-only and does not serve frontend pages or assets", async (t) => {
-  stubRepository(t);
+  stubCatalog(t);
   const request = await serve(t, app);
   for (const path of ["/", "/problem", "/problem/p_1", "/icon.svg", "/assets/missing.js"]) {
     const response = await request(path, { headers: { accept: "text/html" } });
