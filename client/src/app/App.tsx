@@ -3,6 +3,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { AppNavbar } from "@/components/layout/AppNavbar";
 import { BackToTop } from "@/components/ui/BackToTop";
 import Home from "@/pages/Home";
+import RoadmapPage from "@/pages/RoadmapPage";
 import ProblemsPage from "@/pages/ProblemsPage";
 import ProblemPage from "@/pages/ProblemPage";
 import { RouteScroll } from "./RouteScroll";
@@ -22,6 +23,7 @@ export function App() {
       <Routes>
         <Route element={<MarketingLayout />}>
           <Route index element={<Home />} />
+          <Route path="roadmap" element={<RoadmapPage />} />
           <Route path="*" element={
             <main className="mx-auto max-w-5xl px-4 py-16">
               <h1 className="font-heading text-3xl">Page not found</h1>

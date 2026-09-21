@@ -1,7 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router";
-import "@fontsource-variable/josefin-sans";
+import "@fontsource-variable/manrope";
 import "./app/globals.css";
 import { App } from "./app/App";
 import Providers from "./app/providers";

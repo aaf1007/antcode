@@ -10,7 +10,7 @@ export function Navbar() {
   const menuButton = useRef<HTMLButtonElement>(null);
 
   return (
-    <header className="sticky top-4 z-50 mx-5 mt-4 max-w-[1080px] min-[640px]:top-6 min-[640px]:mx-8 min-[640px]:mt-6 min-[1244px]:mx-auto" onKeyDown={(event) => {
+    <header className="sticky top-4 z-50 mx-5 mt-4 max-w-[1120px] min-[640px]:top-6 min-[640px]:mx-8 min-[640px]:mt-6 min-[1200px]:mx-auto" onKeyDown={(event) => {
       if (event.key === "Escape" && menuOpen) {
         setMenuOpen(false);
         menuButton.current?.focus();
@@ -18,7 +18,12 @@ export function Navbar() {
     }}>
       <div className="flex min-h-[58px] items-center justify-between gap-4 rounded-[18px] border border-line bg-[color-mix(in_srgb,var(--color-surface)_88%,transparent)] px-3.5 py-2.5 shadow-[var(--shadow-nav),inset_0_1px_0_var(--color-highlight)] backdrop-blur-[18px] min-[640px]:px-5">
         <Brand />
-        <div className="flex items-center gap-1.5 min-[768px]:gap-3">
+        <nav aria-label="Primary navigation" className="ml-auto hidden items-center gap-1 min-[768px]:flex">
+          <Link to="/#method" className="rounded-lg px-3 py-2 text-[13px] text-muted transition-colors hover:bg-canvas hover:text-ink">Method</Link>
+          <Link to="/#features" className="rounded-lg px-3 py-2 text-[13px] text-muted transition-colors hover:bg-canvas hover:text-ink">Why AntCode</Link>
+          <Link to="/roadmap" className="rounded-lg px-3 py-2 text-[13px] text-muted transition-colors hover:bg-canvas hover:text-ink">Roadmap</Link>
+        </nav>
+        <div className="flex items-center gap-1.5 min-[768px]:ml-2 min-[768px]:gap-3">
           <ThemeToggle />
           <span className="hidden min-[768px]:block min-[768px]:h-5.5 min-[768px]:w-px min-[768px]:bg-line" aria-hidden="true" />
           <PrimaryLink to="/problem" compact>Start coding<Icon name="arrow" width="16" height="16" /></PrimaryLink>
@@ -28,8 +33,10 @@ export function Navbar() {
         </div>
       </div>
       <nav id="mobile-navigation" aria-label="Mobile navigation" className="absolute inset-x-0 top-[calc(100%+8px)] rounded-2xl border border-line bg-surface p-2 shadow-[var(--shadow-nav)] min-[768px]:hidden" hidden={!menuOpen}>
+        <Link to="/#method" className="flex items-center gap-3 rounded-[10px] p-4 font-heading text-[17px] font-semibold [&:hover]:bg-canvas" onClick={() => setMenuOpen(false)}><Icon name="connect" />Method<Icon name="arrow" className="ml-auto" /></Link>
+        <Link to="/#features" className="flex items-center gap-3 rounded-[10px] p-4 font-heading text-[17px] font-semibold [&:hover]:bg-canvas" onClick={() => setMenuOpen(false)}><Icon name="focus" />Why AntCode<Icon name="arrow" className="ml-auto" /></Link>
+        <Link to="/roadmap" className="flex items-center gap-3 rounded-[10px] p-4 font-heading text-[17px] font-semibold [&:hover]:bg-canvas" onClick={() => setMenuOpen(false)}><Icon name="map" />Roadmap<Icon name="arrow" className="ml-auto" /></Link>
         <Link to="/problem" className="flex items-center gap-3 rounded-[10px] p-4 font-heading text-[17px] font-semibold [&:hover]:bg-canvas" onClick={() => setMenuOpen(false)}><Icon name="code" />Practice<Icon name="arrow" className="ml-auto" /></Link>
-        <Link to="/#roadmap" className="flex items-center gap-3 rounded-[10px] p-4 font-heading text-[17px] font-semibold [&:hover]:bg-canvas" onClick={() => setMenuOpen(false)}><Icon name="map" />Roadmap<Icon name="arrow" className="ml-auto" /></Link>
       </nav>
     </header>
   );

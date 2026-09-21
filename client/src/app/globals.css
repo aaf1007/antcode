@@ -40,7 +40,7 @@
 }
 
 :root {
-  --font-display: "Josefin Sans Variable";
+  --font-display: "Manrope Variable";
   --sans: system-ui, "Segoe UI", Roboto, sans-serif;
   --mono: ui-monospace, Consolas, monospace;
   @apply scheme-light scroll-pt-[120px] scroll-smooth;
@@ -115,6 +115,52 @@ body {
 button,
 a {
   -webkit-tap-highlight-color: transparent;
+}
+
+/* Theme changes reveal outward from the control that triggered them. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+  z-index: 1;
+}
+
+::view-transition-new(root) {
+  z-index: 2;
+}
+
+.theme-toggle__icon {
+  display: flex;
+  grid-area: 1 / 1;
+  transition: opacity 220ms ease, transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.theme-toggle__icon--sun {
+  opacity: 0;
+  transform: rotate(-90deg) scale(0.55);
+}
+
+[data-theme="dark"] .theme-toggle__icon--moon {
+  opacity: 0;
+  transform: rotate(90deg) scale(0.55);
+}
+
+[data-theme="dark"] .theme-toggle__icon--sun {
+  opacity: 1;
+  transform: rotate(0) scale(1);
+}
+
+/* Smooth palette fallback for browsers without the View Transitions API. */
+.theme-transition,
+.theme-transition *,
+.theme-transition *::before,
+.theme-transition *::after {
+  transition-property: background-color, border-color, color, fill, stroke, box-shadow;
+  transition-duration: 360ms;
+  transition-timing-function: ease;
 }
 
 @keyframes loading-dot {
