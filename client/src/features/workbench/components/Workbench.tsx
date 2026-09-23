@@ -1,6 +1,7 @@
 import { Group, Panel, Separator } from "react-resizable-panels";
 import { useEffect, useState } from "react";
 import type { ProblemDetailResponse, WorkbenchPayload } from "@/features/problems/problem.types";
+import { Icon } from "@/components/ui/Icon";
 import { MONACO_LANGUAGE_IDS, useWorkbench } from "../useWorkbench";
 import { BottomPanel } from "./BottomPanel";
 import { CodeEditor } from "./CodeEditor";
@@ -23,6 +24,10 @@ function ReadyWorkbenchView({ problem, payload }: { problem: ProblemDetailRespon
 
   const workspace = (
     <div className="flex h-full min-h-0 flex-col bg-surface">
+      <div className="flex h-10 shrink-0 items-center gap-2 border-line border-b px-4 text-sm font-semibold">
+        <Icon name="code" width="16" height="16" className="text-success" />
+        Code
+      </div>
       <Toolbar payload={payload} workbench={workbench} />
       {desktop ? (
         <Group orientation="vertical" className="min-h-0 flex-1" id="editor-results">
@@ -43,14 +48,14 @@ function ReadyWorkbenchView({ problem, payload }: { problem: ProblemDetailRespon
     </div>
   );
 
-  if (!desktop) return <main><StatementPanel problem={problem} /><div className="border-line border-t">{workspace}</div></main>;
+  if (!desktop) return <main className="space-y-2 p-2"><div className="overflow-hidden rounded-lg border border-line"><StatementPanel problem={problem} /></div><div className="overflow-hidden rounded-lg border border-line">{workspace}</div></main>;
 
   return (
-    <main className="h-[calc(100dvh-3.5rem)] overflow-hidden">
+    <main className="h-[calc(100dvh-3rem)] overflow-hidden p-2">
       <Group orientation="horizontal" className="h-full" id="statement-workspace">
-        <Panel id="statement" defaultSize="42%" minSize={330}><StatementPanel problem={problem} /></Panel>
+        <Panel id="statement" defaultSize="42%" minSize={330} className="min-w-0 overflow-hidden rounded-lg border border-line bg-surface"><StatementPanel problem={problem} /></Panel>
         <ResizeSeparator orientation="vertical" />
-        <Panel id="workspace" defaultSize="58%" minSize={500}>{workspace}</Panel>
+        <Panel id="workspace" defaultSize="58%" minSize={500} className="min-w-0 overflow-hidden rounded-lg border border-line bg-surface">{workspace}</Panel>
       </Group>
     </main>
   );
@@ -60,30 +65,38 @@ type WorkbenchState = ReturnType<typeof useWorkbench>;
 
 function Toolbar({ payload, workbench }: { payload: ReadyWorkbench; workbench: WorkbenchState }) {
   return (
-    <div className="flex min-h-14 flex-wrap items-center gap-2 border-line border-b bg-surface px-3 py-2">
+    <div className="flex min-h-12 flex-wrap items-center gap-2 border-line border-b bg-surface px-3 py-1">
       <label className="sr-only" htmlFor="workbench-language">Language</label>
       <select id="workbench-language" value={workbench.language} onChange={(event) => workbench.setLanguage(event.target.value as WorkbenchState["language"])} className="min-h-10 rounded-md border border-line bg-canvas px-3 text-sm font-semibold">
         {payload.languages.map((language) => <option key={language.slug} value={language.slug}>{language.name}</option>)}
       </select>
-      <span className="rounded-full bg-warning/10 px-2.5 py-1 text-xs font-bold text-warning">Simulation mode</span>
+      <span className="rounded-md bg-warning/10 px-2 py-1 text-xs font-semibold text-warning">Simulation mode</span>
       {workbench.isModified && <span className="text-xs text-ink/50">Draft modified</span>}
       <div className="ml-auto flex items-center gap-2">
         <button type="button" onClick={workbench.reset} className="min-h-10 rounded-md px-3 text-sm font-semibold text-ink/70 hover:bg-ink/5 hover:text-ink">Reset</button>
-        <ActionButton label="Run" onClick={() => void workbench.run()} disabled={workbench.isRunning || Boolean(workbench.runDisabledReason)} reason={workbench.runDisabledReason} />
-        <ActionButton label="Submit" primary onClick={() => void workbench.submit()} disabled={workbench.isRunning || Boolean(workbench.submitDisabledReason)} reason={workbench.submitDisabledReason} />
+        <WorkbenchActions workbench={workbench} />
       </div>
       {(workbench.runDisabledReason || workbench.submitDisabledReason) && <p className="w-full text-xs text-ink/60" role="status">{workbench.runDisabledReason ?? workbench.submitDisabledReason}</p>}
     </div>
   );
 }
 
+function WorkbenchActions({ workbench }: { workbench: WorkbenchState }) {
+  return (
+    <div className="flex items-center gap-2">
+      <ActionButton label="Run" onClick={() => void workbench.run()} disabled={workbench.isRunning || Boolean(workbench.runDisabledReason)} reason={workbench.runDisabledReason} />
+      <ActionButton label="Submit" primary onClick={() => void workbench.submit()} disabled={workbench.isRunning || Boolean(workbench.submitDisabledReason)} reason={workbench.submitDisabledReason} />
+    </div>
+  );
+}
+
 function ActionButton({ label, onClick, disabled, primary = false, reason }: { label: string; onClick: () => void; disabled: boolean; primary?: boolean; reason: string | null }) {
-  return <button type="button" onClick={onClick} disabled={disabled} title={reason ?? undefined} className={`min-h-10 rounded-md px-4 text-sm font-bold disabled:cursor-not-allowed disabled:opacity-45 ${primary ? "bg-primary text-white hover:opacity-90" : "border border-line bg-canvas text-ink hover:bg-highlight"}`}>{label}</button>;
+  return <button type="button" onClick={onClick} disabled={disabled} title={reason ?? undefined} className={`min-h-9 rounded-md px-4 text-sm font-bold disabled:cursor-not-allowed disabled:opacity-45 ${primary ? "bg-success/10 text-success hover:bg-success/20" : "bg-canvas text-ink hover:bg-ink/10"}`}>{label}</button>;
 }
 
 function ResizeSeparator({ orientation }: { orientation: "horizontal" | "vertical" }) {
   return (
-    <Separator className={`group relative z-10 flex shrink-0 items-center justify-center bg-line focus-visible:outline-2 focus-visible:outline-accent-text ${orientation === "vertical" ? "w-1 cursor-col-resize" : "h-1 cursor-row-resize"}`}>
+    <Separator className={`group relative z-10 flex shrink-0 items-center justify-center bg-canvas focus-visible:outline-2 focus-visible:outline-accent-text ${orientation === "vertical" ? "w-2 cursor-col-resize" : "h-2 cursor-row-resize"}`}>
       <span aria-hidden="true" className={`absolute rounded-full bg-muted/60 opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100 ${orientation === "vertical" ? "h-10 w-1" : "h-1 w-10"}`} />
     </Separator>
   );
