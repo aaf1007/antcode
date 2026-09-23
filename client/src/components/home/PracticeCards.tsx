@@ -6,14 +6,14 @@ const starters = [
     title: "Start with arrays",
     tag: "EASY",
     description: "First up: Two Sum",
-    href: "https://leetcode.com/problems/two-sum/",
+    to: "/problem/two-sum",
     icon: "layers" as const,
   },
   {
     title: "Train your stack",
     tag: "EASY",
     description: "Next up: Valid Parentheses",
-    href: "https://leetcode.com/problems/valid-parentheses/",
+    to: "/problem/valid-parentheses",
     icon: "stack" as const,
   },
 ];
@@ -41,17 +41,16 @@ export function PracticeCards() {
         </Link>
 
         {starters.map((starter) => (
-          <a key={starter.title} href={starter.href} target="_blank" rel="noopener noreferrer" className="group block overflow-hidden rounded-[18px] border border-line bg-surface shadow-[inset_0_1px_0_var(--color-highlight)] transition-[border-color,transform,box-shadow] duration-200 hover:-translate-y-1 hover:border-accent-text hover:shadow-[0_18px_45px_-32px_rgba(27,31,59,0.4)]">
+          <Link key={starter.title} to={starter.to} className="group block overflow-hidden rounded-[18px] border border-line bg-surface shadow-[inset_0_1px_0_var(--color-highlight)] transition-[border-color,transform,box-shadow] duration-200 hover:-translate-y-1 hover:border-accent-text hover:shadow-[0_18px_45px_-32px_rgba(27,31,59,0.4)]">
             <div className="flex min-h-32 items-start gap-4 p-5 min-[640px]:p-6">
               <span className="grid size-10 shrink-0 place-items-center rounded-[11px] border border-node-line bg-node text-accent-text"><Icon name={starter.icon} /></span>
               <span className="ml-auto rounded-full bg-success/12 px-2.5 py-1 font-code text-[9px] tracking-[0.08em] text-success">{starter.tag}</span>
             </div>
             <div className="border-t border-line p-5 min-[640px]:p-6">
               <h3 className="font-heading text-[21px] font-semibold">{starter.title}</h3>
-              <div className="mt-2 flex items-center justify-between gap-3 text-[13px] text-muted"><p>{starter.description}</p><Icon name="external" width="18" height="18" className="shrink-0 transition-transform group-hover:translate-x-1 group-hover:text-accent-text" /></div>
+              <div className="mt-2 flex items-center justify-between gap-3 text-[13px] text-muted"><p>{starter.description}</p><Icon name="arrow" width="18" height="18" className="shrink-0 transition-transform group-hover:translate-x-1 group-hover:text-accent-text" /></div>
             </div>
-            <span className="sr-only">Opens on LeetCode in a new tab</span>
-          </a>
+          </Link>
         ))}
       </div>
     </section>

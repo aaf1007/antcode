@@ -1,10 +1,14 @@
 import assert from "node:assert/strict";
 import { mock, test, type TestContext } from "node:test";
 import { QueryClient } from "@tanstack/react-query";
-import { problemQueries } from "../../src/features/problems/problem.queries.ts";
+import {
+  parseProblemDetailResponse,
+  problemQueries,
+} from "../../src/features/problems/problem.queries.ts";
 
 const problem = {
-  problemId: "two-sum",
+  problemId: "p_1",
+  slug: "two-sum",
   frontendId: 1,
   title: "Two Sum",
   url: "https://leetcode.com/problems/two-sum/",
@@ -38,7 +42,7 @@ test("problem catalog loads each page", async (t) => {
     }
 
     return Response.json({
-      problems: [{ ...problem, problemId: "add-two", frontendId: 2 }],
+      problems: [{ ...problem, problemId: "p_2", slug: "add-two", frontendId: 2 }],
       nextCursor: null,
     });
   });
@@ -83,11 +87,18 @@ test("problem details are cached while fresh", async (t) => {
   };
   const { fetchMock, queryClient } = setup(
     t,
-    async () => Response.json({ problem: detail }),
+    async () => Response.json({
+      problem: detail,
+      workbench: { availability: "unavailable", reason: "missing_content" },
+    }),
   );
 
-  assert.deepEqual(await queryClient.fetchQuery(problemQueries.detail("two-sum")), detail);
-  assert.deepEqual(await queryClient.fetchQuery(problemQueries.detail("two-sum")), detail);
+  const expected = {
+    problem: detail,
+    workbench: { availability: "unavailable", reason: "missing_content" },
+  };
+  assert.deepEqual(await queryClient.fetchQuery(problemQueries.detail("two-sum")), expected);
+  assert.deepEqual(await queryClient.fetchQuery(problemQueries.detail("two-sum")), expected);
   assert.equal(fetchMock.mock.callCount(), 1);
 });
 
@@ -102,4 +113,37 @@ test("missing problem details return null", async (t) => {
   assert.equal(result, null);
   assert.equal(fetchMock.mock.callCount(), 1);
   assert.equal(fetchMock.mock.calls[0]?.arguments[0], "/api/problem/missing%2Fproblem");
+});
+
+test("problem detail parser accepts a ready workbench", () => {
+  const detail = {
+    ...problem,
+    slug: "two-sum",
+    contentText: "Description",
+    exampleInputFirst: "1",
+    likes: 1,
+    dislikes: 0,
+    totalAccepted: 1,
+    totalSubmitted: 2,
+  };
+  const response = {
+    problem: detail,
+    workbench: {
+      availability: "ready",
+      languages: [
+        { slug: "python3", name: "Python 3", starterCode: "py" },
+        { slug: "javascript", name: "JavaScript", starterCode: "js" },
+        { slug: "java", name: "Java", starterCode: "java" },
+      ],
+      testCases: [{ index: 0, input: "1", expected: "2" }],
+    },
+  };
+  assert.deepEqual(parseProblemDetailResponse(response), response);
+});
+
+test("problem detail parser rejects malformed workbench data", () => {
+  assert.throws(
+    () => parseProblemDetailResponse({ problem, workbench: { availability: "ready" } }),
+    /invalid/,
+  );
 });

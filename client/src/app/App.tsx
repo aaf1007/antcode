@@ -33,7 +33,7 @@ export function App() {
         </Route>
         <Route element={<ProblemLayout />}>
           <Route path="problem" element={<ProblemsPage />} />
-          <Route path="problem/:problemId" element={<ProblemPage />} />
+          <Route path="problem/:slug" element={<ProblemPage />} />
         </Route>
       </Routes>
     </>

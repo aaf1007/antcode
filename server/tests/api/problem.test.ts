@@ -10,6 +10,7 @@ async function setup(t: TestContext, overrides: Parameters<typeof stubCatalog>[1
   stubCatalog(t, {
     listProblems: async () => ({ problems: [listItem], nextCursor: null }),
     findProblem: async () => problemItem,
+    findWorkbench: async () => workbench,
     ...overrides,
   });
   t.mock.method(console, "error", () => {});
@@ -17,7 +18,8 @@ async function setup(t: TestContext, overrides: Parameters<typeof stubCatalog>[1
 }
 
 const listItem: ProblemListItem = {
-  problemId: "two-sum",
+  problemId: "p_1",
+  slug: "two-sum",
   frontendId: 1,
   title: "Two Sum",
   url: "https://leetcode.com/problems/two-sum/",
@@ -25,6 +27,16 @@ const listItem: ProblemListItem = {
   category: "Algorithms",
   isPremium: false,
   acRate: 56.4,
+};
+
+const workbench = {
+  availability: "ready" as const,
+  languages: [
+    { slug: "python3" as const, name: "Python 3", starterCode: "class Solution:" },
+    { slug: "javascript" as const, name: "JavaScript", starterCode: "var twoSum = function() {};" },
+    { slug: "java" as const, name: "Java", starterCode: "class Solution {}" },
+  ],
+  testCases: [{ index: 0, input: "[2,7,11,15]\\n9", expected: "[0,1]" }],
 };
 
 const problemItem: ProblemItem = {
@@ -63,25 +75,25 @@ test("GET /api/problem returns a generic 500 on catalog failure", async (t) => {
   assert.deepEqual(await response.json(), { error: "Internal server error." });
 });
 
-test("GET /api/problem/:problemId returns a problem and decodes its id", async (t) => {
+test("GET /api/problem/:slug returns a problem and decodes its slug", async (t) => {
   let received: unknown;
   const request = await setup(t, {
     findProblem: async (id) => { received = id; return problemItem; },
   });
   const response = await request("/api/problem/two%20sum");
   assert.equal(response.status, 200);
-  assert.deepEqual(await response.json(), { problem: problemItem });
+  assert.deepEqual(await response.json(), { problem: problemItem, workbench });
   assert.equal(received, "two sum");
 });
 
-test("GET /api/problem/:problemId returns 404 for a missing problem", async (t) => {
+test("GET /api/problem/:slug returns 404 for a missing problem", async (t) => {
   const request = await setup(t, { findProblem: async () => null });
   const response = await request("/api/problem/missing");
   assert.equal(response.status, 404);
   assert.deepEqual(await response.json(), { error: "Problem not found." });
 });
 
-test("GET /api/problem/:problemId returns a generic 500 on catalog failure", async (t) => {
+test("GET /api/problem/:slug returns a generic 500 on catalog failure", async (t) => {
   const request = await setup(t, {
     findProblem: async () => { throw new Error("private database details"); },
   });

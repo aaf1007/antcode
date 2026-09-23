@@ -1,1 +1,10 @@
-export type { ProblemItem, ProblemListItem, ProblemList, Difficulty, Category } from "../../../../server/src/types/problem.types.ts";
+export type {
+  ProblemItem,
+  ProblemListItem,
+  ProblemList,
+  Difficulty,
+  Category,
+  ProblemDetailResponse,
+  WorkbenchPayload,
+  WorkbenchLanguageSlug,
+} from "../../../../server/src/types/problem.types.ts";

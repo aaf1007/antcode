@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { findProblem, listProblems } from "../problems/problem.catalog.ts";
+import { findProblem, findWorkbench, listProblems } from "../problems/problem.catalog.ts";
 
 const router = Router();
 
@@ -20,26 +20,27 @@ router.get("/", async (req, res) => {
 });
 
 /**
- * GET /api/problem/:problemId
- * Path `problemId`: the catalog ID of a problem, such as `two-sum`.
- * Response 200: `{ problem }`; response 404: `{ error: "Problem not found." }`.
+ * GET /api/problem/:slug
+ * Path `slug`: the unique URL slug of a problem, such as `two-sum`.
+ * Response 200: `{ problem, workbench }`; response 404: `{ error: "Problem not found." }`.
  */
-router.get("/:problemId", async (req, res) => {
-  const problem = await findProblem(req.params.problemId);
+router.get("/:slug", async (req, res) => {
+  const problem = await findProblem(req.params.slug);
 
   if (!problem) {
     res.status(404).json({ error: "Problem not found." });
     return;
   }
 
-  res.json({ problem });
+  const workbench = await findWorkbench(problem);
+  res.json({ problem, workbench });
 });
 
 /**
  * OPTIONS on the list and detail paths returns 204. Other unsupported methods
  * return 405 with `Allow: GET, HEAD, OPTIONS`; unknown API paths return 404.
  */
-router.all(["/", "/:problemId"], (req, res) => {
+router.all(["/", "/:slug"], (req, res) => {
   res.set("Allow", "GET, HEAD, OPTIONS");
   if (req.method === "OPTIONS") {
     res.sendStatus(204);

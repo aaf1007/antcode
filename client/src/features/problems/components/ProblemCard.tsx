@@ -28,7 +28,7 @@ export function ProblemCard({ problem }: ProblemCardProps) {
         </span>
         <Link
           id={`problem-${problem.problemId}`}
-          to={`/problem/${encodeURIComponent(problem.problemId)}`}
+          to={`/problem/${encodeURIComponent(problem.slug)}`}
           className="truncate text-[15px] text-ink hover:text-accent-text"
         >
           {problem.frontendId}. {problem.title}

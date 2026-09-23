@@ -59,7 +59,7 @@ and run `npm start` from that deployment root.
 
 Build the frontend with `npm run build:client` and publish `client/dist/` to
 its own static host. Configure that host to proxy `/api` requests to Express,
-and to serve `index.html` for frontend page routes such as `/problem/p_1`.
+and to serve `index.html` for frontend page routes such as `/problem/two-sum`.
 The frontend uses relative `/api` URLs, so the proxy must take precedence over
 the frontend fallback. Express serves no frontend HTML or assets.
 
@@ -69,9 +69,9 @@ the frontend fallback. Express serves no frontend HTML or assets.
 | --- | --- |
 | `/` | Homepage |
 | `/problem` | Paginated problem catalog |
-| `/problem/:problemId` | Problem details |
+| `/problem/:slug` | Problem details |
 | `GET /api/problem?after=<frontendId>` | `{ problems, nextCursor }` |
-| `GET /api/problem/:problemId` | `{ problem }`, or a JSON 404 |
+| `GET /api/problem/:slug` | `{ problem, workbench }`, or a JSON 404 |
 
 The API keeps the existing successful response bodies and page size.
 Unexpected failures return HTTP 500 with `{ "error": "Internal server error." }`.

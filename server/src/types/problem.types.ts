@@ -10,6 +10,7 @@ export type Category =
 
 export type ProblemListItem = {
   problemId: string;
+  slug: string;
   frontendId: number;
   title: string;
   url: string;
@@ -20,13 +21,38 @@ export type ProblemListItem = {
 };
 
 export type ProblemItem = ProblemListItem & {
-  slug: string;
   contentText: string | null;
   exampleInputFirst: string;
   likes: number;
   dislikes: number;
   totalAccepted: number;
   totalSubmitted: number;
+};
+
+export type WorkbenchLanguageSlug = "python3" | "javascript" | "java";
+
+export type WorkbenchPayload =
+  | {
+      availability: "ready";
+      languages: Array<{
+        slug: WorkbenchLanguageSlug;
+        name: string;
+        starterCode: string;
+      }>;
+      testCases: Array<{
+        index: number;
+        input: string;
+        expected: string;
+      }>;
+    }
+  | {
+      availability: "unavailable";
+      reason: "premium" | "unsupported_category" | "missing_content";
+    };
+
+export type ProblemDetailResponse = {
+  problem: ProblemItem;
+  workbench: WorkbenchPayload;
 };
 
 export type ProblemList = ProblemListItem[];
