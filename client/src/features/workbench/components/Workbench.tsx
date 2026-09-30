@@ -1,11 +1,13 @@
 import { Group, Panel, Separator } from "react-resizable-panels";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState, type Ref } from "react";
 import type { ProblemDetailResponse, WorkbenchPayload } from "@/features/problems/problem.types";
 import { Icon } from "@/components/ui/Icon";
 import { MONACO_LANGUAGE_IDS, useWorkbench } from "../useWorkbench";
 import { BottomPanel } from "./BottomPanel";
 import { CodeEditor } from "./CodeEditor";
 import { StatementPanel } from "./StatementPanel";
+import { authClient } from "@/features/users/auth-client";
+import { AuthDialog } from "@/features/users/AuthDialog";
 
 type ReadyWorkbench = Extract<WorkbenchPayload, { availability: "ready" }>;
 
@@ -20,6 +22,56 @@ function ReadyWorkbenchView({ problem, payload }: { problem: ProblemDetailRespon
   const desktop = useMedia("(min-width: 1024px)");
   const mobile = useMedia("(max-width: 767px)");
   const workbench = useWorkbench(problem.problemId, payload);
+  const { data: session, isPending: sessionPending, error: sessionError, refetch: refetchSession } = authClient.useSession();
+  const [authDialogOpen, setAuthDialogOpen] = useState(false);
+  const [submitChecking, setSubmitChecking] = useState(false);
+  const [submitCheckError, setSubmitCheckError] = useState(false);
+  const submitButtonRef = useRef<HTMLButtonElement>(null);
+  const restoreSubmitFocus = useRef(false);
+  const closeAuthDialog = () => {
+    setAuthDialogOpen(false);
+    restoreSubmitFocus.current = true;
+  };
+  useEffect(() => {
+    if (restoreSubmitFocus.current && !authDialogOpen && !sessionPending && !sessionError && !submitChecking) {
+      restoreSubmitFocus.current = false;
+      submitButtonRef.current?.focus();
+    }
+  }, [authDialogOpen, sessionError, sessionPending, submitChecking]);
+  const submit = async () => {
+    if (!session) {
+      setAuthDialogOpen(true);
+      return;
+    }
+    setSubmitCheckError(false);
+    setSubmitChecking(true);
+    try {
+      // The session hook may be stale after a tab sits open; verify it at the click.
+      const current = await authClient.getSession();
+      if (current.error) {
+        setSubmitCheckError(true);
+      } else if (current.data?.session) {
+        await workbench.submit();
+      } else {
+        void refetchSession();
+        setAuthDialogOpen(true);
+      }
+    } catch {
+      setSubmitCheckError(true);
+    } finally {
+      setSubmitChecking(false);
+    }
+  };
+  const submitControl: SubmitControl = {
+    pending: sessionPending || submitChecking,
+    error: Boolean(sessionError) || submitCheckError,
+    buttonRef: submitButtonRef,
+    retry: () => {
+      setSubmitCheckError(false);
+      void refetchSession();
+    },
+    submit: () => void submit(),
+  };
   const languageName = payload.languages.find((item) => item.slug === workbench.language)?.name ?? workbench.language;
 
   const workspace = (
@@ -28,11 +80,11 @@ function ReadyWorkbenchView({ problem, payload }: { problem: ProblemDetailRespon
         <Icon name="code" width="16" height="16" className="text-success" />
         Code
       </div>
-      <Toolbar payload={payload} workbench={workbench} />
+      <Toolbar payload={payload} workbench={workbench} submitControl={submitControl} />
       {desktop ? (
         <Group orientation="vertical" className="min-h-0 flex-1" id="editor-results">
           <Panel id="editor" defaultSize="68%" minSize={240}>
-            <CodeEditor value={workbench.source} onChange={workbench.setSource} language={MONACO_LANGUAGE_IDS[workbench.language]} languageName={languageName} useTextarea={mobile} />
+            <CodeEditor value={workbench.source} onChange={workbench.setSource} language={MONACO_LANGUAGE_IDS[workbench.language]} languageName={languageName} useTextarea={false} />
           </Panel>
           <ResizeSeparator orientation="horizontal" />
           <Panel id="results" defaultSize="32%" minSize={210}>
@@ -48,22 +100,37 @@ function ReadyWorkbenchView({ problem, payload }: { problem: ProblemDetailRespon
     </div>
   );
 
-  if (!desktop) return <main className="space-y-2 p-2"><div className="overflow-hidden rounded-lg border border-line"><StatementPanel problem={problem} /></div><div className="overflow-hidden rounded-lg border border-line">{workspace}</div></main>;
+  const authDialog = authDialogOpen && <AuthDialog onClose={closeAuthDialog} onSuccess={() => {
+    closeAuthDialog();
+    void refetchSession();
+  }} />;
+
+  if (!desktop) return <><main className="space-y-2 p-2"><div className="overflow-hidden rounded-lg border border-line"><StatementPanel problem={problem} /></div><div className="overflow-hidden rounded-lg border border-line">{workspace}</div></main>{authDialog}</>;
 
   return (
-    <main className="h-[calc(100dvh-3rem)] overflow-hidden p-2">
+    <><main className="h-[calc(100dvh-3rem)] overflow-hidden p-2">
       <Group orientation="horizontal" className="h-full" id="statement-workspace">
         <Panel id="statement" defaultSize="42%" minSize={330} className="min-w-0 overflow-hidden rounded-lg border border-line bg-surface"><StatementPanel problem={problem} /></Panel>
         <ResizeSeparator orientation="vertical" />
         <Panel id="workspace" defaultSize="58%" minSize={500} className="min-w-0 overflow-hidden rounded-lg border border-line bg-surface">{workspace}</Panel>
       </Group>
-    </main>
+    </main>{authDialog}</>
   );
 }
 
 type WorkbenchState = ReturnType<typeof useWorkbench>;
 
-function Toolbar({ payload, workbench }: { payload: ReadyWorkbench; workbench: WorkbenchState }) {
+type SubmitControl = {
+  pending: boolean;
+  error: boolean;
+  buttonRef: Ref<HTMLButtonElement>;
+  retry: () => void;
+  submit: () => void;
+};
+
+function Toolbar({ payload, workbench, submitControl }: { payload: ReadyWorkbench; workbench: WorkbenchState; submitControl: SubmitControl }) {
+  const submitReason = workbench.submitDisabledReason ?? (submitControl.pending ? "Checking your account…" : submitControl.error ? "Could not check your account." : null);
+  const status = workbench.runDisabledReason ?? submitReason;
   return (
     <div className="flex min-h-12 flex-wrap items-center gap-2 border-line border-b bg-surface px-3 py-1">
       <label className="sr-only" htmlFor="workbench-language">Language</label>
@@ -74,24 +141,18 @@ function Toolbar({ payload, workbench }: { payload: ReadyWorkbench; workbench: W
       {workbench.isModified && <span className="text-xs text-ink/50">Draft modified</span>}
       <div className="ml-auto flex items-center gap-2">
         <button type="button" onClick={workbench.reset} className="min-h-10 rounded-md px-3 text-sm font-semibold text-ink/70 hover:bg-ink/5 hover:text-ink">Reset</button>
-        <WorkbenchActions workbench={workbench} />
+        <div className="flex items-center gap-2">
+          <ActionButton label="Run" onClick={() => void workbench.run()} disabled={workbench.isRunning || Boolean(workbench.runDisabledReason)} reason={workbench.runDisabledReason} />
+          <ActionButton label="Submit" primary buttonRef={submitControl.buttonRef} onClick={submitControl.submit} disabled={workbench.isRunning || Boolean(submitReason)} reason={submitReason} />
+        </div>
       </div>
-      {(workbench.runDisabledReason || workbench.submitDisabledReason) && <p className="w-full text-xs text-ink/60" role="status">{workbench.runDisabledReason ?? workbench.submitDisabledReason}</p>}
+      {(status || submitControl.error) && <p className="w-full text-xs text-ink/60" role="status">{status}{submitControl.error && <button type="button" onClick={submitControl.retry} className="ml-2 font-semibold text-accent-text underline">Retry</button>}</p>}
     </div>
   );
 }
 
-function WorkbenchActions({ workbench }: { workbench: WorkbenchState }) {
-  return (
-    <div className="flex items-center gap-2">
-      <ActionButton label="Run" onClick={() => void workbench.run()} disabled={workbench.isRunning || Boolean(workbench.runDisabledReason)} reason={workbench.runDisabledReason} />
-      <ActionButton label="Submit" primary onClick={() => void workbench.submit()} disabled={workbench.isRunning || Boolean(workbench.submitDisabledReason)} reason={workbench.submitDisabledReason} />
-    </div>
-  );
-}
-
-function ActionButton({ label, onClick, disabled, primary = false, reason }: { label: string; onClick: () => void; disabled: boolean; primary?: boolean; reason: string | null }) {
-  return <button type="button" onClick={onClick} disabled={disabled} title={reason ?? undefined} className={`min-h-9 rounded-md px-4 text-sm font-bold disabled:cursor-not-allowed disabled:opacity-45 ${primary ? "bg-success/10 text-success hover:bg-success/20" : "bg-canvas text-ink hover:bg-ink/10"}`}>{label}</button>;
+function ActionButton({ label, onClick, disabled, primary = false, reason, buttonRef }: { label: string; onClick: () => void; disabled: boolean; primary?: boolean; reason: string | null; buttonRef?: Ref<HTMLButtonElement> }) {
+  return <button ref={buttonRef} type="button" onClick={onClick} disabled={disabled} title={reason ?? undefined} className={`min-h-9 rounded-md px-4 text-sm font-bold disabled:cursor-not-allowed disabled:opacity-45 ${primary ? "bg-success/10 text-success hover:bg-success/20" : "bg-canvas text-ink hover:bg-ink/10"}`}>{label}</button>;
 }
 
 function ResizeSeparator({ orientation }: { orientation: "horizontal" | "vertical" }) {

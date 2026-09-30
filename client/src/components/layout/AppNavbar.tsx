@@ -1,6 +1,7 @@
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { Icon } from "@/components/ui/Icon";
 import { Link, useLocation } from "react-router";
+import { AuthNavControls } from "@/features/users/AuthNavControls";
 
 /** Shared navigation for the problem catalog and coding workbench. */
 export function AppNavbar() {
@@ -9,7 +10,7 @@ export function AppNavbar() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-line bg-surface">
-      <div className="flex h-12 items-center gap-2 px-3 sm:gap-3 sm:px-4">
+      <div className="flex min-h-12 flex-wrap items-center gap-2 px-3 py-1 sm:flex-nowrap sm:gap-3 sm:px-4">
         <Link to="/" aria-label="AntCode home" className="grid size-9 shrink-0 place-items-center rounded-md text-accent-text transition-colors hover:bg-ink/5">
           <Icon name="code" width="23" height="23" strokeWidth="2.2" />
         </Link>
@@ -26,6 +27,7 @@ export function AppNavbar() {
         <div className="ml-auto flex shrink-0 items-center">
           <ThemeToggle />
         </div>
+        <div className="flex w-full justify-end sm:w-auto"><AuthNavControls /></div>
       </div>
     </header>
   );

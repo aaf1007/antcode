@@ -106,10 +106,14 @@ function abortableDelay(delayMs: number, signal: AbortSignal): Promise<void> {
       reject(signal.reason ?? new DOMException("Aborted", "AbortError"));
       return;
     }
-    const timer = globalThis.setTimeout(resolve, delayMs);
-    signal.addEventListener("abort", () => {
+    const onAbort = () => {
       globalThis.clearTimeout(timer);
       reject(signal.reason ?? new DOMException("Aborted", "AbortError"));
-    }, { once: true });
+    };
+    const timer = globalThis.setTimeout(() => {
+      signal.removeEventListener("abort", onAbort);
+      resolve();
+    }, delayMs);
+    signal.addEventListener("abort", onAbort, { once: true });
   });
 }

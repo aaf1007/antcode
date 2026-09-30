@@ -25,7 +25,9 @@ export function useWorkbench(
   payload: ReadyWorkbench,
   executeOverride?: ExecuteSandbox,
 ) {
-  const [language, setLanguageState] = useState<WorkbenchLanguageSlug>("python3");
+  const [language, setLanguageState] = useState<WorkbenchLanguageSlug>(
+    () => payload.languages.find((item) => item.slug === "python3")?.slug ?? payload.languages[0]?.slug ?? "python3",
+  );
   const [sources, setSources] = useState<Record<WorkbenchLanguageSlug, string>>(() =>
     Object.fromEntries(payload.languages.map((item) => [
       item.slug,
@@ -50,7 +52,7 @@ export function useWorkbench(
     [executeOverride, payload.testCases],
   );
 
-  const source = sources[language];
+  const source = sources[language] ?? "";
   const starterCode = payload.languages.find((item) => item.slug === language)?.starterCode ?? "";
 
   const invalidateResult = useCallback(() => {
@@ -63,19 +65,8 @@ export function useWorkbench(
 
   useEffect(() => () => abortRef.current?.abort(), []);
 
-  useEffect(() => {
-    const timer = window.setTimeout(() => {
-      writePersisted(draftKey(problemId, language), source);
-    }, 250);
-    return () => window.clearTimeout(timer);
-  }, [language, problemId, source]);
-
-  useEffect(() => {
-    const timer = window.setTimeout(() => {
-      writePersisted(customInputKey(problemId), customInput);
-    }, 250);
-    return () => window.clearTimeout(timer);
-  }, [customInput, problemId]);
+  useDebouncedPersist(draftKey(problemId, language), source);
+  useDebouncedPersist(customInputKey(problemId), customInput);
 
   const setSource = useCallback((value: string) => {
     invalidateResult();
@@ -142,6 +133,14 @@ export function useWorkbench(
     }
   }, [customInput, execute, invalidateResult, language, payload.testCases, problemId, selection, source]);
 
+  // Callers may await before running (e.g. the Submit session check); run with the latest source then.
+  const runRef = useRef(run);
+  useEffect(() => {
+    runRef.current = run;
+  }, [run]);
+  const runLatest = useCallback(() => runRef.current("run"), []);
+  const submitLatest = useCallback(() => runRef.current("submit"), []);
+
   return {
     language,
     source,
@@ -163,7 +162,27 @@ export function useWorkbench(
     setSelection,
     setActiveBottomTab,
     reset,
-    run: () => run("run"),
-    submit: () => run("submit"),
+    run: runLatest,
+    submit: submitLatest,
   };
+}
+
+function useDebouncedPersist(key: string, value: string) {
+  const pending = useRef<{ key: string; value: string } | null>(null);
+
+  useEffect(() => {
+    pending.current = { key, value };
+    const timer = window.setTimeout(() => {
+      writePersisted(key, value);
+      pending.current = null;
+    }, 250);
+    return () => window.clearTimeout(timer);
+  }, [key, value]);
+
+  // Flush the last edit when the key changes (e.g. a language switch) or on unmount.
+  useEffect(() => () => {
+    const write = pending.current;
+    pending.current = null;
+    if (write) writePersisted(write.key, write.value);
+  }, [key]);
 }

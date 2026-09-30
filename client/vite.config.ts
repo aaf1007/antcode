@@ -22,7 +22,8 @@ export default defineConfig(({ mode }) => {
     ],
     resolve: { alias: { "@": fileURLToPath(new URL("./src", import.meta.url)) } },
     server: {
-      host: "0.0.0.0",
+      // Loopback only; pass --host to dev:client to expose the dev server on the network.
+      host: "127.0.0.1",
       port: 3000,
       strictPort: true,
       proxy: { "/api": `http://127.0.0.1:${env.API_PORT || 5001}` },
