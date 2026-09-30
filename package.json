@@ -13,7 +13,7 @@
     "start": "node server/dist/server.js",
     "lint": "eslint .",
     "typecheck": "tsc -p client/tsconfig.json && tsc -p server/tsconfig.json --noEmit && tsc --noEmit",
-    "test": "NODE_ENV=test BETTER_AUTH_SKIP_SCHEMA_CHECK=1 BETTER_AUTH_SECRET=test-only-better-auth-secret-000000000000 BETTER_AUTH_URL=https://localhost:3000 node --experimental-test-module-mocks --import tsx --test \"client/tests/**/*.test.ts\" \"server/tests/**/*.test.ts\"",
+    "test": "NODE_ENV=test DATABASE_URL=postgresql://unused:unused@127.0.0.1:1/unused BETTER_AUTH_SKIP_SCHEMA_CHECK=1 BETTER_AUTH_SECRET=test-only-better-auth-secret-000000000000 BETTER_AUTH_URL=https://localhost:3000 node --experimental-test-module-mocks --import tsx --test \"client/tests/**/*.test.ts\" \"server/tests/**/*.test.ts\"",
     "test:auth": "NODE_ENV=production node --import tsx --test server/integration/auth.test.ts",
     "auth:migrate": "auth migrate --config server/src/auth/auth.ts --yes",
     "auth:check": "auth check schema --config server/src/auth/auth.ts",
