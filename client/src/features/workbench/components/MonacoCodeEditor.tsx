@@ -22,13 +22,13 @@ export default function MonacoCodeEditor({ value, onChange, language, languageNa
   const theme = useDocumentTheme();
   return (
     <Editor
-      aria-label={`${languageName} source code`}
       height="100%"
       language={language}
       value={value}
       theme={theme === "dark" ? "vs-dark" : "light"}
       onChange={(next) => onChange(next ?? "")}
       options={{
+        ariaLabel: `${languageName} source code`,
         automaticLayout: true,
         fontFamily: "var(--mono)",
         fontSize: 14,

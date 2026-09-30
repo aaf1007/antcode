@@ -147,3 +147,25 @@ test("problem detail parser rejects malformed workbench data", () => {
     /invalid/,
   );
 });
+
+test("problem detail parser accepts a ready workbench without python3", () => {
+  const response = {
+    problem,
+    workbench: {
+      availability: "ready",
+      languages: [{ slug: "javascript", name: "JavaScript", starterCode: "js" }],
+      testCases: [],
+    },
+  };
+  assert.deepEqual(parseProblemDetailResponse(response), response);
+});
+
+test("problem detail parser rejects a ready workbench with no languages", () => {
+  assert.throws(
+    () => parseProblemDetailResponse({
+      problem,
+      workbench: { availability: "ready", languages: [], testCases: [] },
+    }),
+    /invalid/,
+  );
+});

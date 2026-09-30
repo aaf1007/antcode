@@ -76,6 +76,7 @@ export function parseProblemDetailResponse(value: unknown): ProblemDetailRespons
   if (
     workbench.availability !== "ready" ||
     !Array.isArray(workbench.languages) ||
+    workbench.languages.length === 0 ||
     !Array.isArray(workbench.testCases)
   ) {
     throw new Error("The problem response was invalid.");

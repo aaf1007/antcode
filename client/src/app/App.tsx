@@ -6,6 +6,7 @@ import Home from "@/pages/Home";
 import RoadmapPage from "@/pages/RoadmapPage";
 import ProblemsPage from "@/pages/ProblemsPage";
 import ProblemPage from "@/pages/ProblemPage";
+import { AuthPage } from "@/features/users/AuthPage";
 import { RouteScroll } from "./RouteScroll";
 
 function MarketingLayout() {
@@ -24,6 +25,8 @@ export function App() {
         <Route element={<MarketingLayout />}>
           <Route index element={<Home />} />
           <Route path="roadmap" element={<RoadmapPage />} />
+          <Route path="sign-in" element={<AuthPage mode="sign-in" />} />
+          <Route path="sign-up" element={<AuthPage mode="sign-up" />} />
           <Route path="*" element={
             <main className="mx-auto max-w-5xl px-4 py-16">
               <h1 className="font-heading text-3xl">Page not found</h1>

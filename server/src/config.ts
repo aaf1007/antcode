@@ -19,7 +19,8 @@ export function createConfig(
   return {
     development: isDevelopment,
     port,
-    host: environment.HOST ?? "0.0.0.0",
+    // Development stays on loopback; production listens on all interfaces for containers.
+    host: environment.HOST ?? (isDevelopment ? "127.0.0.1" : "0.0.0.0"),
   };
 }
 

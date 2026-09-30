@@ -6,7 +6,7 @@ test("development uses API_PORT and defaults to port 5001", () => {
   assert.deepEqual(createConfig({}, true), {
     development: true,
     port: 5001,
-    host: "0.0.0.0",
+    host: "127.0.0.1",
   });
 
   assert.equal(createConfig({ API_PORT: "5100" }, true).port, 5100);
@@ -17,8 +17,13 @@ test("production uses PORT and defaults to port 3000", () => {
   assert.equal(createConfig({ PORT: "8080" }, false).port, 8080);
 });
 
+test("production listens on all interfaces by default", () => {
+  assert.equal(createConfig({}, false).host, "0.0.0.0");
+});
+
 test("configuration reads the host", () => {
-  assert.equal(createConfig({ HOST: "127.0.0.1" }, true).host, "127.0.0.1");
+  assert.equal(createConfig({ HOST: "0.0.0.0" }, true).host, "0.0.0.0");
+  assert.equal(createConfig({ HOST: "127.0.0.1" }, false).host, "127.0.0.1");
 });
 
 for (const value of ["", "3.14", "0", "65536", "not-a-port"]) {

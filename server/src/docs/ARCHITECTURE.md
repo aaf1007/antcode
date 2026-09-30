@@ -1,7 +1,8 @@
 # Server architecture
 
 The root npm scripts run the client and server together. Server application
-code lives entirely under `server/src`, with tests under `server/tests`.
+code lives entirely under `server/src`, with database-free tests under
+`server/tests` and disposable-database integration tests under `server/integration`.
 
 ```text
 server/
@@ -11,6 +12,7 @@ server/
 │   │   ├── migrations/
 │   │   ├── raw/
 │   │   └── seed/
+│   ├── auth/                      # Better Auth configuration
 │   ├── docs/
 │   ├── middleware/
 │   │   └── error-handler.ts
@@ -23,7 +25,8 @@ server/
 │   ├── app.ts
 │   ├── config.ts
 │   └── server.ts
-├── tests/
+├── tests/                     # Database-free tests
+├── integration/               # Disposable PostgreSQL tests
 └── tsconfig.json
 ```
 
@@ -44,19 +47,23 @@ Problem requests flow through **route → problem catalog → Prisma**:
   unsupported encodings, with a generic `Invalid request.` message.
 - `types` owns shared API data shapes. The frontend imports API types with
   `import type` only.
-- `app.ts` exports the configured Express app, registering JSON parsing, API
-  routes, API 404s, and the error middleware in order.
+- `app.ts` exports the configured Express app. It mounts Better Auth before
+  JSON parsing, then registers catalog routes, API 404s, and error middleware.
+  See [Authentication](../../../docs/AUTHENTICATION.md) for the account request
+  flow and PostgreSQL schema ownership.
 - `config.ts` loads the root environment, validates the port, and exports the
-  development mode, port, and host before Express initializes.
-- `server.ts` opens the listener and exits on startup errors.
-  It uses normal process termination; active requests are not drained on exit.
+  development mode, port, and host (`127.0.0.1` in development, `0.0.0.0` in
+  production, unless `HOST` is set) before Express initializes.
+- `server.ts` opens the listener and exits on startup errors. On SIGTERM or
+  SIGINT it stops accepting connections, waits up to 10 seconds for in-flight
+  requests, then closes the Better Auth and catalog database pools.
 
 Modules use direct imports; there is no app/router factory chain or separate
 handler layer. To add a problem endpoint, register a callback on its router and
 call the corresponding catalog function.
 
 Run `npm run dev:server` from the repository root for the API on port 5001.
-Run `npm run build:server` to emit JavaScript to `server/dist`. The production
+Run `npm run build:server` to clear `server/dist` and emit JavaScript to it. The production
 entry is `server/dist/server.js`, which serves only the API. It has no dependency
 on `client/dist`; frontend hosting and page fallbacks belong to the frontend host.
 Generated contracts, raw datasets, and migration history stay under `db`;
