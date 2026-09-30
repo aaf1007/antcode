@@ -3,10 +3,11 @@ import { test } from "node:test";
 import { serve } from "../helpers/http.ts";
 import { stubCatalog } from "../helpers/catalog.ts";
 
-process.env.NODE_ENV = "production";
+// app.ts has no environment-specific routes. The suite runs with NODE_ENV=test
+// because production mode always validates the auth schema against a database.
 const { default: app } = await import("../../src/app.ts");
 
-test("production is API-only and does not serve frontend pages or assets", async (t) => {
+test("the API server does not serve frontend pages or assets", async (t) => {
   stubCatalog(t);
   const request = await serve(t, app);
   for (const path of ["/", "/problem", "/problem/p_1", "/icon.svg", "/assets/missing.js"]) {

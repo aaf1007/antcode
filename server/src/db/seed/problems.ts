@@ -49,16 +49,17 @@ type RawProblem = {
 };
 
 const sql = (db as any).sql.public;
+type Transaction = Parameters<Parameters<typeof db.transaction>[0]>[0];
 
 // Postgres caps a statement at 65535 bind parameters. Size each batch from the
 // row's column count so wide tables (problem: 23 columns) stay well under it.
-async function insertAll(table: string, rows: Record<string, unknown>[]): Promise<number> {
+async function insertAll(tx: Transaction, table: string, rows: Record<string, unknown>[]): Promise<number> {
   if (rows.length === 0) return 0;
   const columns = Object.keys(rows[0]).length;
   const chunkSize = Math.max(1, Math.min(2000, Math.floor(50_000 / columns)));
   for (let i = 0; i < rows.length; i += chunkSize) {
     const chunk = rows.slice(i, i + chunkSize);
-    await db.runtime().execute(sql[table].insert(chunk).build());
+    await tx.execute(sql[table].insert(chunk).build());
   }
   return rows.length;
 }
@@ -84,16 +85,6 @@ async function main() {
   const statsFetchedAt = statSync(RAW).mtime.toISOString();
   const now = new Date().toISOString();
   console.log(`Read ${problems.length} problems from leetcode_problems.json`);
-
-  // Children first — every FK cascades, but explicit order keeps this readable
-  // and independent of cascade behaviour.
-  for (const table of [
-    "similarProblem", "testCase", "hiddenTestCase", "problemHint",
-    "codeSnippet", "problemTopic", "problem", "topic", "language",
-  ]) {
-    await db.runtime().execute(sql[table].delete().build());
-  }
-  console.log("Cleared existing rows");
 
   const problemId = (p: RawProblem) => `p_${p.question_id}`;
   const topicId = (slug: string) => `t_${slug}`;
@@ -191,17 +182,30 @@ async function main() {
     }
   }
 
-  // --- Insert, parents before children -------------------------------------
+  // One transaction for the wipe and reload, so a failed run leaves the
+  // previous catalog in place instead of a partially seeded one.
   const counts: Record<string, number> = {};
-  counts.topic = await insertAll("topic", [...topics.values()]);
-  counts.language = await insertAll("language", [...languages.values()]);
-  counts.problem = await insertAll("problem", problemRows);
-  counts.problemTopic = await insertAll("problemTopic", problemTopicRows);
-  counts.codeSnippet = await insertAll("codeSnippet", codeSnippetRows);
-  counts.problemHint = await insertAll("problemHint", hintRows);
-  counts.testCase = await insertAll("testCase", testCaseRows);
-  counts.hiddenTestCase = await insertAll("hiddenTestCase", hiddenTestCaseRows);
-  counts.similarProblem = await insertAll("similarProblem", similarRows);
+  await db.transaction(async (tx) => {
+    // Children first — every FK cascades, but explicit order keeps this readable
+    // and independent of cascade behaviour.
+    for (const table of [
+      "similarProblem", "testCase", "hiddenTestCase", "problemHint",
+      "codeSnippet", "problemTopic", "problem", "topic", "language",
+    ]) {
+      await tx.execute(sql[table].delete().build());
+    }
+
+    // --- Insert, parents before children -----------------------------------
+    counts.topic = await insertAll(tx, "topic", [...topics.values()]);
+    counts.language = await insertAll(tx, "language", [...languages.values()]);
+    counts.problem = await insertAll(tx, "problem", problemRows);
+    counts.problemTopic = await insertAll(tx, "problemTopic", problemTopicRows);
+    counts.codeSnippet = await insertAll(tx, "codeSnippet", codeSnippetRows);
+    counts.problemHint = await insertAll(tx, "problemHint", hintRows);
+    counts.testCase = await insertAll(tx, "testCase", testCaseRows);
+    counts.hiddenTestCase = await insertAll(tx, "hiddenTestCase", hiddenTestCaseRows);
+    counts.similarProblem = await insertAll(tx, "similarProblem", similarRows);
+  });
 
   const total = Object.values(counts).reduce((a, b) => a + b, 0);
   console.log("\nSeeded:");
