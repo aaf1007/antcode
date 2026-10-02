@@ -59,7 +59,7 @@
     "globals": "^17.0.0",
     "jsdom": "26.1.0",
     "oxlint": "^1.86.0",
-    "prisma": "^8.0.0-rc.10",
+    "prisma": "^8.0.0-rc.19",
     "tailwindcss": "^4.3.3",
     "tsx": "^4.23.15",
     "typescript": "^6.0.3",
