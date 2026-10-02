@@ -1,0 +1,91 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: check (${{ matrix.node }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # engines minimum and the recommended LTS
+        node: [22.12.x, 24.x]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
+      # `build` runs `typecheck` first.
+      - run: npm run build
+      - if: matrix.node == '24.x'
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: |
+            client/dist
+            server/dist
+          retention-days: 7
+
+  database:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: antcode
+          POSTGRES_PASSWORD: antcode
+          # test:auth refuses any database whose name lacks `auth_test`.
+          POSTGRES_DB: antcode_auth_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U antcode -d antcode_auth_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://antcode:antcode@localhost:5432/antcode_auth_test
+      AUTH_TEST_DATABASE_URL: postgresql://antcode:antcode@localhost:5432/antcode_auth_test
+      # Disposable CI database only; matches docs/AUTHENTICATION.md.
+      BETTER_AUTH_SECRET: test-only-better-auth-secret-000000000000
+      # Production mode requires an HTTPS origin.
+      BETTER_AUTH_URL: https://antcode.test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24.x
+          cache: npm
+      - run: npm ci
+      # No migration packages exist yet; switch to `prisma db migrate` once they do.
+      - run: npx prisma db init --yes
+      - run: npx prisma db verify
+      - run: npm run auth:migrate
+      - run: npm run auth:check
+      - run: npm run seed
+      - run: npm run test:auth
+      - run: npm run build:server
+      - name: Smoke test compiled API
+        run: |
+          PORT=3000 node server/dist/server.js &
+          for _ in $(seq 1 30); do
+            curl -fsS http://localhost:3000/api/problem > /tmp/list.json && break
+            sleep 1
+          done
+          jq -e '.problems | type == "array" and length > 0' /tmp/list.json
+          test "$(curl -s -o /dev/null -w '%{http_code}' http://localhost:3000/api/problem/two-sum)" = 200
