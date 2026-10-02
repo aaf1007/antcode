@@ -22,8 +22,8 @@ jobs:
         # engines minimum and the recommended LTS
         node: [22.12.x, 24.x]
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: ${{ matrix.node }}
           cache: npm
@@ -33,7 +33,7 @@ jobs:
       # `build` runs `typecheck` first.
       - run: npm run build
       - if: matrix.node == '24.x'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: dist
           path: |
@@ -66,8 +66,8 @@ jobs:
       # Production mode requires an HTTPS origin.
       BETTER_AUTH_URL: https://antcode.test
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: 24.x
           cache: npm
