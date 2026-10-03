@@ -4,10 +4,12 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    # Prisma 8 RCs break between releases and its packages must move in
+    # lockstep, so upgrade them by hand (see the prisma-8 skill's upgrade notes).
+    ignore:
+      - dependency-name: "prisma"
+      - dependency-name: "@prisma/*"
     groups:
-      # Prisma 8 is still an RC; its packages must move together.
-      prisma:
-        patterns: ["prisma", "@prisma/*"]
       minor-and-patch:
         update-types: [minor, patch]
 
