@@ -9,6 +9,10 @@ updates:
     ignore:
       - dependency-name: "prisma"
       - dependency-name: "@prisma/*"
+      # typescript-eslint does not support TS 7 yet (typescript-eslint#10940).
+      # Remove once it does.
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
     groups:
       minor-and-patch:
         update-types: [minor, patch]
